@@ -6,3 +6,14 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-image: linear-gradient(to left, rgb(27 20 41), rgb(20 15 35));
 }
+
+
+@font-face {
+  font-family: "210 나무굴림R";
+  font-weight: normal;
+  src: url("./fonts/210 나무굴림R.ttf") format("truetype");
+}
+
+body {
+  font-family: "210 나무굴림R";
+}
