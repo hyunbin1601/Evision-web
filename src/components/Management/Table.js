@@ -35,7 +35,7 @@ const StyledTd = styled.td`
     }
 `;
 
-const Table = ({ names, days }) => {
+const Table = ({ names, days, onCheckboxChange }) => {
     return (
         <StyledTable>
             <thead>
@@ -48,11 +48,14 @@ const Table = ({ names, days }) => {
             </thead>
             <tbody>
                 {names.map((name) => (
-                    <tr key={name}>
+                    <tr key={name.name}>
                         <StyledTd>{name.name}</StyledTd>
                         {days.map((day) => (
                             <StyledTd key={`${name.name}-${day}`}>
-                                <input type="checkbox" />
+                                <input 
+                                type="checkbox"
+                                onChange={() => onCheckboxChange(`${name.name}-${day}`)}
+                                />
                             </StyledTd>
                         ))}
                     </tr>

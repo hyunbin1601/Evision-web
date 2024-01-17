@@ -3,7 +3,6 @@ import Preloader from "../src/components/Pre";
 import Navbar from "./components/Navbar";
 import Home from "./components/Home/Home";
 import About from "./components/About/About";
-import Projects from "./components/Projects/Projects";
 import {
   BrowserRouter as Router,
   Route,
@@ -17,6 +16,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import UserInfo from "./components/MyPage/UserInfo";
 import Attendance from "./components/Management/Attendance"
 import Login from "./components/Login/Login"
+import UsersList from "./components/Management/UsersList"
 
 function App() {
   const [load, upadateLoad] = useState(true);
@@ -37,10 +37,10 @@ function App() {
         <ScrollToTop />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/project" element={<Projects />} />
           <Route path="/about" element={<About />} />
           <Route path="/MyPage" element={<UserInfo />} />
           <Route path="/Management/Attendance" element={<Attendance />} />
+          <Route path="/Management/UsersList" element={<UsersList />} />
           <Route path="/Login" element={<Login />} />
           <Route path="*" element={<Navigate to="/"/>} />
         </Routes>
