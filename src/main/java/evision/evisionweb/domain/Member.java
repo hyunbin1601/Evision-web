@@ -7,7 +7,6 @@ public class Member {
     private String pw;
     private String major;
     private String email;
-
     private String type;
     private boolean admin;
 
