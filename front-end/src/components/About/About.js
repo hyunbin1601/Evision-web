@@ -22,7 +22,7 @@ function About() {
             }}
           >
             <h1 style={{ fontSize: "2.1em", paddingBottom: "20px" }}>
-              Know Who <strong className="purple">I'M</strong>
+              Introduce <strong className="purple">EVI$ION</strong>
             </h1>
             <Aboutcard />
           </Col>
@@ -35,17 +35,17 @@ function About() {
           </Col>
         </Row>
         <h1 className="project-heading">
-          Professional <strong className="purple">Skillset </strong>
+          EVI$ION <strong className="purple">수상 및 외부 활동 내역 </strong>
         </h1>
 
         <Techstack />
 
         <h1 className="project-heading">
-          <strong className="purple">Tools</strong> I use
+          <strong className="purple">EVI$ION 활동</strong>으로 얻을 수 있는 것
         </h1>
         <Toolstack />
 
-        <Github />
+        
       </Container>
     </Container>
   );
