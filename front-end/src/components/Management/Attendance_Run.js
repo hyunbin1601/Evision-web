@@ -44,7 +44,7 @@ const Attendance = () => {
 
     return (
         <div>
-            <Styledp1>러닝세션 과제체크</Styledp1>
+            <Styledp1>러닝세션 출석체크</Styledp1>
             <Table names={names} days={days} onCheckboxChange={handleCheckboxChange}/>
             <StyledButton onClick={handleSaveClick}>Save</StyledButton>
         </div>

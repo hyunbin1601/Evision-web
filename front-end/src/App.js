@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Preloader from "../src/components/Pre";
 import Navbar from "./components/Navbar";
-import Home from "./components/Home/Home";
-import About from "./components/About/About";
 import {
   BrowserRouter as Router,
   Route,
@@ -36,8 +34,6 @@ function App() {
         <Navbar />
         <ScrollToTop />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
           <Route path="/MyPage" element={<UserInfo />} />
           <Route path="/Management/Attendance" element={<Attendance />} />
           <Route path="/Management/UsersList" element={<UsersList />} />
