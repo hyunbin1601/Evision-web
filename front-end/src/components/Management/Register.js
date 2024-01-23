@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 const RegisterBox = styled.div`
     background-color: #e6e6e6;
     border-radius: 10px;
     padding: 20px;
     top: 218px;
-    left: 700px;
+    left: 780px;
     width: 450px;
     position: relative;
 `;
@@ -49,14 +51,32 @@ const RegisterButton = styled.button`
 `;
 
 const Register = () => {
+    const navigate = useNavigate();
     const [studentName, setStudentName] = useState('');
     const [studentId, setStudentId] = useState('');
     const [major, setMajor] = useState('');
     const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [isChecked, setIsChecked] = useState(false);
 
     const handleRegister = () => {
-        //서버랑 연결하는 부분, fetch, asyc, await를 통해 주고받을 예정임
+        axios
+        .post("서버 엔트포인트", {
+            studentName: studentName,
+            studentId: studentId,
+            major: major,
+            email: email,
+            password: password,
+            isChecked: isChecked
+        })
+        .then((response) => {
+            if(response.status === 200) {
+                return navigate("마이페이지");
+            }
+        })
+        .catch((error) => {
+            alert(error.response.data.message)
+        })
     };
 
     return (
@@ -92,6 +112,14 @@ const Register = () => {
             placeholder="이메일"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+        />
+        </InputBox>
+        <InputBox>
+        <Input
+            type="password"
+            placeholder="패스워드"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
         />
         </InputBox>
         <InputBox>

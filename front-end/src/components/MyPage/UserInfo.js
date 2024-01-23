@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import './UserInfo.css';
-import Particle from "../Particle";
 
 
 
@@ -30,7 +29,6 @@ const UserInfo = () => {
 
     return (
         <div className="user-info-container">
-        <Particle />
         <p>User Info</p>
             <div className="user-info-box">
                 <div className="info-item">

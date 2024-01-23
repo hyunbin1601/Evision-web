@@ -1,54 +1,147 @@
-import React, {useState} from 'react';
-import Table from './Table';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import { useTable } from 'react-table';
+import axios from 'axios';
 
-const Styledh1 = styled.h1`
-    font-size: 2.3em;
-    color: white;
-    font-weight: bold;
-    top: 220px;
-    left: 550px;
-    text-align: left;
-    position: relative;
-    width: 300px;
-`;
-const StyledButton = styled.button`
-    top: 660px;
-    left: 200px;
-    position: relative;
-    background-color: #1a5d1a;
-    color: #fff;
-    padding: 10px 15px;
-    margin-top: 20px;
-    cursor: pointer;
+const TableContainer = styled.div`
+  font-family: 'Arial', sans-serif;
+  border-collapse: collapse;
+  width: 800px;
 `;
 
+const TableHead = styled.th`
+  background-color: #f2f2f2;
+  padding: 12px;
+  text-align: left;
+`;
 
-const Attendance = () => {
-    const [checkedCells, setCheckedCells] = useState([]);  //chekedCells는 서버로 보낼 체크박스 키값의 배열
+const TableRow = styled.tr`
+  &:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+`;
 
-    const handleCheckboxChange = (key) => {  //prevCheckedCells <- 이전에 체크한 체크박스 배열 저장
-        setCheckedCells((prevCheckedCells) =>
-            prevCheckedCells.includes(key)   //key는 셀에 넣은 구분키
-                ? prevCheckedCells.filter((cellKey) => cellKey !== key)
-                : [...prevCheckedCells, key]
-        );
-    };
+const TableCell = styled.td`
+  padding: 12px;
+`;
 
-    const handleSaveClick = () => {
-        //서버와의 통신을 위한 용도임
-    };
+const CheckboxInput = styled.input`
+  width: 20px;
+  height: 20px;
+`;
 
-    const names = [{ name: '이면빈' }];   //json 형태로 보내기 때문에 -> {} 사용!
-    const days = ['날짜1', '날짜2', '날짜3'];
+const Button = styled.button`
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+`;
 
-    return (
-        <div>
-            <Styledh1>출석 체크</Styledh1>
-            <Table names={names} days={days} onCheckboxChange={handleCheckboxChange}/>
-            <StyledButton onClick={handleSaveClick}>Save</StyledButton>
-        </div>
-    );
+const AttendanceTable = () => {
+  const [names, setNames] = useState([]);
+  const [attendanceData, setAttendanceData] = useState([]);
+
+  useEffect(() => {
+    // 서버에서 이름 목록을 불러오는 axios 요청
+    axios.get('/api/names')
+      .then(response => setNames(response.data))
+      .catch(error => console.error(error));
+
+    // 페이지가 처음 로드될 때, 오늘 날짜의 출석체크 데이터를 초기화
+    initializeAttendanceData();
+  }, []);
+
+  const initializeAttendanceData = () => {
+    const todayDate = new Date().toISOString().split('T')[0];
+    const initialData = names.map(({ name, student_id }) => ({
+      name,
+      student_id,
+      attendanceCheck: false,
+      todayDate,
+    }));
+    setAttendanceData(initialData);
+  };
+
+  const handleCheckboxChange = (student_id) => {
+    const updatedData = attendanceData.map(data => {
+      if (data.student_id === student_id) {
+        return { ...data, attendanceCheck: !data.attendanceCheck };
+      }
+      return data;
+    });
+    setAttendanceData(updatedData);
+  };
+
+  const handleSave = () => {
+    const payload = attendanceData.map(({ name, student_id, attendanceCheck, todayDate }) => ({
+      name,
+      student_id,
+      attendanceCheck,
+      todayDate,
+    }));
+
+    // 서버로 출석체크 데이터를 저장하는 axios 요청
+    axios.post('/attendance/update', payload)
+      .then(response => console.log(response.data))
+      .catch(error => console.error(error));
+  };
+
+  // react-table 사용을 위한 코드
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: '이름',
+        accessor: 'name',
+      },
+      {
+        Header: '출석 체크',
+        accessor: 'attendanceCheck',
+        Cell: ({ row }) => (
+          <CheckboxInput
+            type="checkbox"
+            checked={row.original.attendanceCheck}
+            onChange={() => handleCheckboxChange(row.original.student_id)}
+          />
+        ),
+      },
+    ],
+    []
+  );
+
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data: attendanceData });
+
+  return (
+    <div>
+      <TableContainer {...getTableProps()}>
+        <thead>
+          {headerGroups.map(headerGroup => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map(column => (
+                <TableHead {...column.getHeaderProps()}>{column.render('Header')}</TableHead>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {rows.map(row => {
+            prepareRow(row);
+            return (
+              <TableRow {...row.getRowProps()}>
+                {row.cells.map(cell => (
+                  <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>
+                ))}
+              </TableRow>
+            );
+          })}
+        </tbody>
+      </TableContainer>
+      <div>
+        <Button onClick={handleSave}>Save</Button>
+      </div>
+    </div>
+  );
 };
 
-export default Attendance;
+export default AttendanceTable;

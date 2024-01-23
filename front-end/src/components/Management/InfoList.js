@@ -21,6 +21,10 @@ const Td = styled.td`
     padding: 8px;
 `;
 
+const ButtonSet = styled.div`
+    
+`;
+
 const EditButton = styled.button`
     background-color: #4caf50;
     color: white;
@@ -36,6 +40,11 @@ const EditButton = styled.button`
 const SaveButton = styled(EditButton)`
     background-color: #008cba;
 `;
+
+const DeleteButton = styled(EditButton)`
+    background-color: #008cba;
+`;
+
 
 const Wrapper = styled.div`
     max-width: 800px;
@@ -62,11 +71,16 @@ const InfoList = ({ userInfos, handleSave }) => {
         setIsEditing(false);
     };
 
+    const handleDeleteClick = () => {
+
+    };
+
     return (
         <Wrapper>
             <Table>
                 <thead>
                 <tr>
+                <Th></Th>
                 <Th>이름</Th>
                 <Th>학번</Th>
                 <Th>이메일</Th>
@@ -76,8 +90,13 @@ const InfoList = ({ userInfos, handleSave }) => {
                 </tr>
                 </thead>
                 <tbody>
-                {userInfos.map((userInfo, index) => (
-                    <tr key={index}>
+                {userInfos.map((userInfo) => (
+                    <tr key={userInfo.studentId}>
+                    <Td>
+                    <input 
+                        type="checkbox"
+                    />
+                    </Td>
                     <Td>
                     {isEditing ? (
                         <input
@@ -148,13 +167,14 @@ const InfoList = ({ userInfos, handleSave }) => {
                 ))}
                 </tbody>
             </Table>
-        <div>
+        <ButtonSet>
         {isEditing ? (
             <SaveButton onClick={handleSaveClick}>Save</SaveButton>
         ) : (
             <EditButton onClick={() => setIsEditing(true)}>Edit</EditButton>
         )}
-        </div>
+        <DeleteButton onClick={handleDeleteClick}>Delete</DeleteButton>
+        </ButtonSet>
         </Wrapper>
     );
 };
