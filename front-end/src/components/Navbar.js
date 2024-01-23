@@ -5,6 +5,7 @@ import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import { ImBlog } from "react-icons/im";
+import Recruiting from "./Recruiting/Recruiting";
 
 import {
   AiOutlineHome,
@@ -57,8 +58,8 @@ function NavBar() {
             </Nav.Item>
 
             <Nav.Item>
-              <Nav.Link as={Link} to="/" onClick={() => updateExpanded(false)}>
-                <ImBlog style={{ marginBottom: "2px" }} /> Recruting
+              <Nav.Link as={Link} to="/Recruiting" onClick={() => updateExpanded(false)}>
+                <ImBlog style={{ marginBottom: "2px" }} /> Recruiting
               </Nav.Link>
             </Nav.Item>
 
