@@ -7,8 +7,14 @@ import evision.evisionweb.repository.MemberRepository;
 import evision.evisionweb.repository.MemberRepositoryImpl;
 import evision.evisionweb.repository.SessionRepository;
 import evision.evisionweb.repository.SessionRepositoryImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.List;
 import java.util.Optional;
+
 
 public class AdminService {
 
@@ -17,6 +23,10 @@ public class AdminService {
     MemberRepository memberRepository = new MemberRepositoryImpl();
     SessionRepository sessionRepository = new SessionRepositoryImpl();
 
+    @Autowired
+    public void setMemberRepository(MemberRepository memberRepository){
+        this.memberRepository = new MemberRepositoryImpl();
+    }
     public Member addMember(String name, Long id, String pw, String major, String email, String type, boolean admin){
         member.setName(name);
         member.setId(id);
@@ -26,8 +36,10 @@ public class AdminService {
         member.setType(type);
         member.setAdmin(admin);
 
-        memberRepository.save(member, member.getId(), member.getPw());
+        Object[] createMemberParams = new Object[]{member.getName(), member.getId(), member.getPw(), member.getMajor(), member.getEmail(), member.getType(), member.isAdmin()};
+        this.memberRepository.save(member, id, pw);
         return member;
+
     }
 
     public Member modifyMember(String name, Long id, String pw, String major, String email, String type, boolean admin){
