@@ -28,4 +28,8 @@ public class MemberService {
         else return false;
     }
 
+    public enum Authority{
+        ROLE_NOTMEMBER, ROLE_MEMBER, ROLE_ADMIN
+    }
+
 }
