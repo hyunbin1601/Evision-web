@@ -6,7 +6,7 @@ function Recruiting() {
     <div className="Recruiting">
       {/* 상단 섹션 - 설명 */}
       <div className="description-section">
-        <h1>Recruiting</h1>
+        <h1><strong>Recruiting</strong></h1>
 
         <h2>1.모집절차</h2>
         <div className="icon-heading">

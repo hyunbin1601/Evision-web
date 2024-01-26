@@ -12,18 +12,20 @@ body {
   }
   
   .description-section {
-    height: 550px;
+    height: 600px;
     border-radius: 10px;
   }
   
   .description-section h1 {
     color: #1A5D1A; /* Set text color to green */
     font-size : 75px;
+    padding : 30px;
   }
   
   .description-section h2 {
     color: #ffffff; /* Set text color to green */
     font-size : 25px;
+    padding : 10px;
   }
   
   .recruting1 {
@@ -54,6 +56,7 @@ body {
   .description-section h3 {
     color: #ffffff; /* Set text color to green */
     font-size : 25px;
+    padding: 10px;
   }
   
   .description-section h4 {
