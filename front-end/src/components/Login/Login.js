@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const LoginBox = styled.div`
     background-color: #e6e6e6;
@@ -42,9 +43,24 @@ const Login = () => {
     const [studentId, setstudentId] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleLogin = () => {
+   /* const handleLogin = async () => {
         //서버랑 연결하는 부분, fetch, asyc, await를 통해 주고받을 예정임
-    };
+        try{
+            const response = await axios.post('서버 주소', {
+                user_id: studentId,
+                user_pw: password,
+            });
+
+            if(response.data.success) {
+                alert("로그인 성공");
+            } else {
+                alert("로그인 실패 : 학번과 비밀번호를 확인해주세요");
+            }
+
+        } catch(error) {
+            alert("로그인 실패");
+        }
+    }; */
 
     return (
         <LoginBox>
@@ -65,7 +81,7 @@ const Login = () => {
             onChange={(e) => setPassword(e.target.value)}
         />
         </InputBox>
-        <LoginButton onClick={handleLogin}>Login</LoginButton>
+     {/*   <LoginButton onClick={handleLogin}>Login</LoginButton>*/}
         </LoginBox>
     );
 };
