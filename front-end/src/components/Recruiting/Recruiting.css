@@ -1,0 +1,102 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    color: #ffffff; /* Set text color to green */
+  }
+  
+  .Recruiting {
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    top: 80px;
+  }
+  
+  .description-section {
+    height: 600px;
+    border-radius: 10px;
+  }
+  
+  .description-section h1 {
+    color: #1A5D1A; /* Set text color to green */
+    font-size : 75px;
+    padding : 30px;
+  }
+  
+  .description-section h2 {
+    color: #ffffff; /* Set text color to green */
+    font-size : 25px;
+    padding : 10px;
+  }
+  
+  .recruting1 {
+    color: #ffffff;
+    font-size : 20px;
+    position: relative;
+    top: 1px;
+    left: 740px;
+  }
+  .recruting2 {
+    width: 900px;
+    color: #ffffff;
+    font-size : 20px;
+    position: relative;
+    top: 1px;
+    left: 440px;
+
+  }
+  .recruting3 {
+    color: #ffffff;
+    font-size : 20px;
+    position: relative;
+    top: 1px;
+    left: 790px;
+  }
+  
+  
+  .description-section h3 {
+    color: #ffffff; /* Set text color to green */
+    font-size : 25px;
+    padding: 10px;
+  }
+  
+  .description-section h4 {
+    color: #ffffff; /* Set text color to green */
+    font-size : 25px;
+  }
+  
+  .button-section button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+
+  }
+  
+  .apply-button {
+    background-color: #1A5D1A; /* Set button color to a shade of blue */
+    color: #fff; /* Set text color to white */
+  }
+  
+  
+  .button-section button:hover {
+    opacity: 0.8;
+  }
+  
+  
+  .icon-heading {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center-align the icons horizontally */
+    margin-left: 150px;
+    margin-bottom: 20px;
+  }
+  
+  .icon-heading svg {
+    margin-right: 100px; /* Adjust the margin-right for increased spacing between individual icons */
+    position: relative;
+    top: -5px;
+  }
+  
+  
