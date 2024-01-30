@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import InfoList from './InfoList';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const Wrapper = styled.div`
     max-width: 800px;
@@ -11,8 +12,8 @@ const H1 = styled.p`
     font-size: 2.3em;
     color: white;
     font-weight: bold;
-    top: 220px;
-    left: 550px;
+    top: 120px;
+    left: 260px;
     text-align: left;
     position: relative;
     width: 300px;
@@ -21,37 +22,26 @@ const H1 = styled.p`
 
 
 const UsersList = () => {
-    const dummyData = [
-        {
-            name: '이면빈',
-            studentId: '2176317',
-            email: 'vina1601@ewhain.net',
-            year: 'ob',
-            fine: 3000,
-            price: 27000,
-        },
-        {
-            name: '류정윤',
-            studentId: '몰라',
-            email: 'stellano@ewhain.net',
-            year: 'ob',
-            fine: 3000,
-            price: 27000,
-        }
-    ];
+    const [userInfos, setUserInfos] = useState([]);
+    useEffect(() => {
+        axios.get("/api/userInfo")
+            .then(response => {
+                setUserInfos(response.data);
+            })
+            .catch(err => console.log(err))
+    }, [])
 
-    const handleSave = (editedValues) => {
-    //axios로 함수 작성, 서버 만들어지는 대로 ㄱㄱ
+    const handleSave = (updatedUserInfos) => {
+        setUserInfos(updatedUserInfos);   
     };
 
-    const onCheckboxChange = () => {
 
-    }
+
 
     return (
         <Wrapper>
             <H1>회원 정보 목록</H1>
-            <InfoList userInfos={dummyData} handleSave={handleSave} />
+            <InfoList userInfos={userInfos} handleSave={handleSave}/>
         </Wrapper>
     );
 };

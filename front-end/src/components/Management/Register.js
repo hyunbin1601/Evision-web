@@ -8,7 +8,7 @@ const RegisterBox = styled.div`
     border-radius: 10px;
     padding: 20px;
     top: 218px;
-    left: 780px;
+    left: 735px;
     width: 450px;
     position: relative;
 `;
@@ -57,21 +57,28 @@ const Register = () => {
     const [major, setMajor] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [isChecked, setIsChecked] = useState(false);
+    const [passwordConfirmation, setPasswordConfirmation] = useState('');
+    const [typeIsChecked, setTypeIsChecked] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     const handleRegister = () => {
+        if (password !== passwordConfirmation) {
+            alert("패스워드가 일치하지 않습니다. 다시 입력해주세요.");
+            return;
+        }
         axios
-        .post("서버 엔트포인트", {
-            studentName: studentName,
-            studentId: studentId,
+        .post("", {
+            name: studentName,
+            user_id: studentId,
             major: major,
             email: email,
             password: password,
-            isChecked: isChecked
+            isOb: typeIsChecked,
+            admin: isAdmin,
         })
         .then((response) => {
             if(response.status === 200) {
-                return navigate("마이페이지");
+                return navigate("/MyPage");
             }
         })
         .catch((error) => {
@@ -123,11 +130,27 @@ const Register = () => {
         />
         </InputBox>
         <InputBox>
+            <Input
+                type="password"
+                placeholder="패스워드 확인"
+                value={passwordConfirmation}
+                onChange={(e) => setPasswordConfirmation(e.target.value)}
+            />
+        </InputBox>
+        <InputBox>
             <AdditionalText>ob</AdditionalText>
             <RadioInput
                 type="radio"
-                checked={isChecked}
-                onChange={() => setIsChecked(!isChecked)}
+                checked={typeIsChecked}
+                onChange={() => setTypeIsChecked(!typeIsChecked)}
+            />
+        </InputBox>
+        <InputBox>
+            <AdditionalText>관리자</AdditionalText>
+            <RadioInput
+                type="radio"
+                checked={isAdmin}
+                onChange={() => setIsAdmin(!isAdmin)}
             />
         </InputBox>
         <RegisterButton onClick={handleRegister}>Register</RegisterButton>

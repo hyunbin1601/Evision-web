@@ -1,19 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useTable } from 'react-table';
 import styled from 'styled-components';
 
-const TableContainer = styled.div`
-    font-family: 'Arial', sans-serif;
+const H1 = styled.p`
+    font-size: 2.3em;
+    color: white;
+    font-weight: bold;
+    top: 120px;
+    left: 750px;
+    text-align: center;
+    position: relative;
+    width: 400px;
+`;
+
+const TableContainer = styled.table`
     border-collapse: collapse;
-    width: 800px;
-    margin: 20px auto;
+    width: 600px;
+    margin-bottom: 20px;
+    top: 150px;
+    left: 600px;
+    position: relative;
 `;
 
 const TableHead = styled.th`
-    background-color: #f2f2f2;
+    background-color: #1a5d1a;
     padding: 12px;
-    text-align: left;
+    text-align: center;
+    color: white;
+    border: 1px solid #dddddd;
 `;
 
 const TableRow = styled.tr`
@@ -39,34 +53,56 @@ const Button = styled.button`
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-top: 10px;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+    margin-right: 10px;
+    top: 600px;
+    position: relative;
 `;
 
-const AttendanceTable = () => {
+const AttendancePatch = () => {
     const [names, setNames] = useState([]);
     const [attendanceData, setAttendanceData] = useState([]);
     const [dateHeaders, setDateHeaders] = useState([]);
 
     useEffect(() => {
-        axios.get('/api/attendance')
+        axios.get('')
             .then(response => {
-                const { attendanceData, dateHeaders } = extractData(response.data);
+                const { names, attendanceData, dateHeaders } = extractData(response.data);
+                setNames(names);
                 setAttendanceData(attendanceData);
                 setDateHeaders(dateHeaders);
             })
-            .catch(error => console.error(error));
-
-        axios.get('/api/names')
-            .then(response => setNames(response.data))
             .catch(error => console.error(error));
     }, []);
 
     const extractData = (rawData) => {
         const extractedData = {
+            names: [],
             attendanceData: [],
             dateHeaders: [],
         };
 
+        rawData.names.forEach(name => {
+            extractedData.names.push(name);
+        });
+
+        rawData.attendanceData.forEach(data => {
+            const { name, student_id, attendance_status } = data;
+            const newData = { name, student_id };
+            Object.entries(attendance_status).forEach(([date, value]) => {
+                if (!extractedData.dateHeaders.includes(date)) {
+                    extractedData.dateHeaders.push(date);
+                }
+                newData[date] = value;
+            });
+            extractedData.attendanceData.push(newData);
+        });
 
         extractedData.dateHeaders.sort((a, b) => new Date(a) - new Date(b));
 
@@ -83,68 +119,47 @@ const AttendanceTable = () => {
     };
 
     const handleSave = () => {
-        const payload = attendanceData.map(({ name, student_id, ...attendanceChecks }) => ({
+        const saveData = attendanceData.map(({ name, student_id, ...attendance_status_set }) => ({
             name,
             student_id,
-            attendanceChecks,
+            attendance_status_set: Object.entries(attendance_status_set).map(([date, attendance_status]) => ({
+                date,
+                attendance_status,
+            })),
         }));
 
-        axios.patch('/attendance/update', payload)
+        axios.patch('', saveData)
             .then(response => console.log(response.data))
             .catch(error => console.error(error));
     };
 
-    const columns = React.useMemo(
-        () => [
-            {
-                Header: '이름',
-                accessor: 'name',
-            },
-            ...dateHeaders.map(date => ({
-                Header: date,
-                accessor: date,
-                Cell: ({ row }) => (
-                    <TableCell>
-                        <CheckboxInput
-                            type="checkbox"
-                            checked={row.original[date] || false}
-                            onChange={() => handleCheckboxChange(row.original.student_id, date)}
-                        />
-                    </TableCell>
-                ),
-            })),
-        ],
-        [dateHeaders]
-    );
-
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
-        columns,
-        data: attendanceData,
-    });
-
     return (
         <div>
-            <TableContainer {...getTableProps()}>
+            <H1>정규세션 출석체크 수정</H1>
+            <TableContainer>
                 <thead>
-                    {headerGroups.map(headerGroup => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map(column => (
-                                <TableHead {...column.getHeaderProps()}>{column.render('Header')}</TableHead>
-                            ))}
-                        </tr>
-                    ))}
+                    <tr>
+                        <TableHead>이름</TableHead>
+                        {dateHeaders.map(date => (
+                            <TableHead key={date}>{date}</TableHead>
+                        ))}
+                    </tr>
                 </thead>
-                <tbody {...getTableBodyProps()}>
-                    {rows.map(row => {
-                        prepareRow(row);
-                        return (
-                            <TableRow {...row.getRowProps()}>
-                                {row.cells.map(cell => (
-                                    <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>
-                                ))}
-                            </TableRow>
-                        );
-                    })}
+                <tbody>
+                    {attendanceData.map(({ name, student_id, ...attendance_status_set }) => (
+                        <TableRow key={student_id}>
+                            <TableCell>{name}</TableCell>
+                            {dateHeaders.map(date => (
+                                <TableCell key={date}>
+                                    <CheckboxInput
+                                        type="checkbox"
+                                        checked={attendance_status_set[date] || false}
+                                        onChange={() => handleCheckboxChange(student_id, date)}
+                                    />
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    ))}
                 </tbody>
             </TableContainer>
             <Button onClick={handleSave}>Save</Button>
@@ -152,4 +167,4 @@ const AttendanceTable = () => {
     );
 };
 
-export default AttendanceTable;
+export default AttendancePatch;

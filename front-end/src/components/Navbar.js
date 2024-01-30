@@ -5,13 +5,15 @@ import Container from "react-bootstrap/Container";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import { ImBlog } from "react-icons/im";
-import Recruiting from "./Recruiting/Recruiting";
+import axios from "axios";
 
 import {
   AiOutlineHome,
   AiOutlineFundProjectionScreen,
   AiOutlineUser,
   AiOutlineLogin,
+  AiOutlineProfile,
+  AiOutlineLogout
 } from "react-icons/ai";
 
 
@@ -29,6 +31,17 @@ function NavBar() {
   }
 
   window.addEventListener("scroll", scrollHandler);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("userToken"));
+
+  const handleLogout = async () => {
+    try {
+      await axios.get("");
+    }
+    catch (e) {
+      console.log(e)
+    }
+  }
 
   return (
     <Navbar
@@ -58,8 +71,14 @@ function NavBar() {
             </Nav.Item>
 
             <Nav.Item>
-              <Nav.Link as={Link} to="/Recruiting" onClick={() => updateExpanded(false)}>
-                <ImBlog style={{ marginBottom: "2px" }} /> Recruiting
+              <Nav.Link as={Link} to="/Recruting" onClick={() => updateExpanded(false)}>
+                <ImBlog style={{ marginBottom: "2px" }} /> Recruting
+              </Nav.Link>
+            </Nav.Item>
+
+            <Nav.Item>
+              <Nav.Link as={Link} to="/About" onClick={() => updateExpanded(false)}>
+                <AiOutlineProfile style={{ marginBottom: "2px" }} /> About
               </Nav.Link>
             </Nav.Item>
 
@@ -76,7 +95,7 @@ function NavBar() {
             <Nav.Item>
               <Nav.Link
                 as={Link}
-                to="/project"
+                to="/Management/Attendance"
                 onClick={() => updateExpanded(false)}
               >
                 <AiOutlineFundProjectionScreen
@@ -85,16 +104,16 @@ function NavBar() {
                 Management
               </Nav.Link>
             </Nav.Item>
-
-
-            <Nav.Item className="fork-btn">
-              <Button
-                href="https://github.com/soumyajit4419/Portfolio"
-                target="_blank"
-                className="fork-btn-inner"
-              >
-                <AiOutlineLogin style={{ marginBottom: "2px" }} /> Login
-              </Button>
+            <Nav.Item>
+              {isLoggedIn ? (
+                <Button onClick={handleLogout} className="fork-btn-inner">
+                  <AiOutlineLogout style={{marginBottom: "2px"}} /> Logout
+                </Button>
+              ):(
+                <Button href="/Login" className="fork-btn-inner">
+                  <AiOutlineLogin style={{marginBotton: "2px"}} /> Login
+                </Button>
+              )}
             </Nav.Item>
           </Nav>
         </Navbar.Collapse>
@@ -102,5 +121,21 @@ function NavBar() {
     </Navbar>
   );
 }
+
+/*
+            {isLoggedIn && (
+              <Nav.Item>
+                {isAdmin ? (
+                  <Nav.Link as={Link} to="/Management/Attendance" onClick={() => setIsLoggedIn(false)}>
+                    <AiOutlineFundProjectionScreen /> Management
+                  </Nav.Link>
+                ) : (
+                  <Nav.Link as={Link} to="/MyPage" onClick={() => setIsLoggedIn(false)}>
+                    <AiOutlineUser /> MyPage
+                  </Nav.Link>
+                )}
+              </Nav.Item>
+            )}
+ */
 
 export default NavBar;
