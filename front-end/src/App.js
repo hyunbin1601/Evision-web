@@ -15,6 +15,7 @@ import UserInfo from "./components/MyPage/UserInfo";
 import Attendance from "./components/Management/Attendance"
 import Login from "./components/Login/Login"
 import UsersList from "./components/Management/UsersList"
+import Recruiting from "./components/Recruiting/Recruiting";
 
 function App() {
   const [load, upadateLoad] = useState(true);
@@ -38,6 +39,7 @@ function App() {
           <Route path="/Management/Attendance" element={<Attendance />} />
           <Route path="/Management/UsersList" element={<UsersList />} />
           <Route path="/Login" element={<Login />} />
+          <Route path="/Recruiting" element={<Recruiting />} />
           <Route path="*" element={<Navigate to="/"/>} />
         </Routes>
       </div>
