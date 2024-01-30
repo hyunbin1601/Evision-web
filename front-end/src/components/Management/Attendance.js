@@ -1,147 +1,147 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useTable } from 'react-table';
 import axios from 'axios';
 
-const TableContainer = styled.div`
-  font-family: 'Arial', sans-serif;
-  border-collapse: collapse;
-  width: 800px;
+
+const H1 = styled.p`
+    font-size: 2.3em;
+    color: white;
+    font-weight: bold;
+    top: 120px;
+    left: 750px;
+    text-align: center;
+    position: relative;
+    width: 400px;
+`;
+
+const TableContainer = styled.table`
+    border-collapse: collapse;
+    width: 400px;
+    margin-bottom: 20px;
+    top: 150px;
+    left: 750px;
+    position: relative;
 `;
 
 const TableHead = styled.th`
-  background-color: #f2f2f2;
-  padding: 12px;
-  text-align: left;
+    background-color: #1a5d1a;
+    padding: 12px;
+    text-align: center;
+    color: white;
+    border: 1px solid #dddddd;
 `;
 
 const TableRow = styled.tr`
-  &:nth-child(even) {
-    background-color: #f9f9f9;
-  }
+    &:nth-child(even) {
+        background-color: #f9f9f9;
+    }
 `;
 
 const TableCell = styled.td`
-  padding: 12px;
+    padding: 12px;
+    border: 1px solid #e6e6e6;
 `;
 
 const CheckboxInput = styled.input`
-  width: 20px;
-  height: 20px;
+    width: 20px;
+    height: 20px;
 `;
+
 
 const Button = styled.button`
-  background-color: #4caf50;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+    margin-right: 10px;
+    top: 600px;
+    position: relative;
 `;
 
-const AttendanceTable = () => {
-  const [names, setNames] = useState([]);
-  const [attendanceData, setAttendanceData] = useState([]);
-
-  useEffect(() => {
-    // 서버에서 이름 목록을 불러오는 axios 요청
-    axios.get('/api/names')
-      .then(response => setNames(response.data))
-      .catch(error => console.error(error));
-
-    // 페이지가 처음 로드될 때, 오늘 날짜의 출석체크 데이터를 초기화
-    initializeAttendanceData();
-  }, []);
-
-  const initializeAttendanceData = () => {
+const Attendance = () => {
+    const [names, setNames] = useState([]);
+    const [attendanceData, setAttendanceData] = useState([]);
     const todayDate = new Date().toISOString().split('T')[0];
-    const initialData = names.map(({ name, student_id }) => ({
-      name,
-      student_id,
-      attendanceCheck: false,
-      todayDate,
-    }));
-    setAttendanceData(initialData);
-  };
 
-  const handleCheckboxChange = (student_id) => {
-    const updatedData = attendanceData.map(data => {
-      if (data.student_id === student_id) {
-        return { ...data, attendanceCheck: !data.attendanceCheck };
-      }
-      return data;
-    });
-    setAttendanceData(updatedData);
-  };
+    useEffect(() => {
+        axios.get('')  //get 방식으로 요청을 보냄 -> 페이지가 렌더링 되자마자 실행
+            .then(response => setNames(response.data))
+            .catch(error => console.error(error));
 
-  const handleSave = () => {
-    const payload = attendanceData.map(({ name, student_id, attendanceCheck, todayDate }) => ({
-      name,
-      student_id,
-      attendanceCheck,
-      todayDate,
-    }));
+        initializeAttendanceData();
+    }, []);
 
-    // 서버로 출석체크 데이터를 저장하는 axios 요청
-    axios.post('/attendance/update', payload)
-      .then(response => console.log(response.data))
-      .catch(error => console.error(error));
-  };
+    const initializeAttendanceData = () => {
+        const initialData = names.map(({ name, student_id }) => ({
+            name,
+            student_id,
+            attendance_status: false,
+        }));
+        setAttendanceData(initialData);
+    };
 
-  // react-table 사용을 위한 코드
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: '이름',
-        accessor: 'name',
-      },
-      {
-        Header: '출석 체크',
-        accessor: 'attendanceCheck',
-        Cell: ({ row }) => (
-          <CheckboxInput
-            type="checkbox"
-            checked={row.original.attendanceCheck}
-            onChange={() => handleCheckboxChange(row.original.student_id)}
-          />
-        ),
-      },
-    ],
-    []
-  );
+    const handleCheckboxChange = (student_id) => {
+        const updatedData = attendanceData.map(data => {
+            if (data.student_id === student_id) {
+                return { ...data, attendance_status: !data.attendance_status };
+            }
+            return data;
+        });
+        setAttendanceData(updatedData);
+    };
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({ columns, data: attendanceData });
+    const handleSave = () => {
+        const saveData = attendanceData.map(({ name, student_id, attendance_status, todayDate }) => ({
+            name,
+            student_id,
+            attendance_status,
+            todayDate
+        }));
 
-  return (
-    <div>
-      <TableContainer {...getTableProps()}>
-        <thead>
-          {headerGroups.map(headerGroup => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map(column => (
-                <TableHead {...column.getHeaderProps()}>{column.render('Header')}</TableHead>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody {...getTableBodyProps()}>
-          {rows.map(row => {
-            prepareRow(row);
-            return (
-              <TableRow {...row.getRowProps()}>
-                {row.cells.map(cell => (
-                  <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>
-                ))}
-              </TableRow>
-            );
-          })}
-        </tbody>
-      </TableContainer>
-      <div>
-        <Button onClick={handleSave}>Save</Button>
-      </div>
-    </div>
-  );
+        axios.post('', saveData)
+            .then(response => console.log(response.data))
+            .catch(error => console.error(error));
+    };
+
+    return (
+        <div>
+            <H1>정규세션 출석체크</H1>
+            <TableContainer>
+                <thead>
+                    <tr>
+                        <TableHead>이름</TableHead>
+                        <TableHead>{todayDate}</TableHead>
+                    </tr>
+                </thead>
+                <tbody>
+                    {attendanceData.map(({ name, student_id, attendance_status }) => (
+                        <TableRow key={student_id}>
+                            <TableCell>{name}</TableCell>
+                            <TableCell>
+                                <CheckboxInput
+                                    type="checkbox"
+                                    checked={attendance_status}    
+                                    onChange={() => handleCheckboxChange(student_id)}
+                                />
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </tbody>
+            </TableContainer>
+            <div>
+                <Button onClick={handleSave}>Save</Button>
+            </div>
+        </div>
+    );
 };
 
-export default AttendanceTable;
+export default Attendance;
