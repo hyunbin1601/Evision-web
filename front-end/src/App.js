@@ -22,8 +22,8 @@ import AssignmentCheck from "./components/Management/AssignmentCheck-Th"
 import Register from "./components/Management/Register"
 import AttendanceRun from "./components/Management/Attendance_Run"
 import PrivateRoute from "./components/Route/privateRoute";
-
-
+import Recruiting from "./components/Recruiting/Recruiting";
+import Assignment from "./components/MyPage/Assignment";
 
 
 function App() {
@@ -55,6 +55,8 @@ function App() {
           <Route path="/Management/AssignmentCheck_Su" element={<AssignmentCheckSu />} />
           <Route path="/Management/AssignmentCheck" element={<AssignmentCheck />} />
           <Route path="/Management/Register" element={<Register />} />
+          <Route path="/Recruiting" element={<Recruiting />} />
+          <Route path="/MyPage/Assignment" element={<Assignment />} />
         </Routes>
       </div>
     </Router>
