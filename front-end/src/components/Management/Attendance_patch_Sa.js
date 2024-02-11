@@ -65,14 +65,13 @@ const Button = styled.button`
     position: relative;
 `;
 
-const AttendancePatch = () => {
+const AttendancePatch_Sa = () => {
     const [attendanceList, setAttendanceList] = useState([]);
     const [names, setNames] = useState([]);
     const [dateHeaders, setDateHeaders] = useState([]);
     const selectedList = [
         { value: "ABSENCE", name: "ABSENCE" },
         { value: "ATTEND", name: "ATTEND" },
-        { value: "LATE", name: "LATE" }
     ];
     const token = localStorage.getItem('token');
     const config = { headers: { "Authorization" : `Bearer ${token}` } }
@@ -81,7 +80,7 @@ const AttendancePatch = () => {
         axios.get('/admin/attendance', config)
             .then(response => {
                 if(response.data.success === true) {
-                    const filteredList = response.data.member_attendance.filter(item => item.session_type === 'thr');
+                    const filteredList = response.data.member_attendance.filter(item => item.session_type === 'sat');
                     setAttendanceList(filteredList);
                     const { names, dateHeaders } = extractData(filteredList);
                     setNames(names);
@@ -144,7 +143,7 @@ const AttendancePatch = () => {
 
     return (
         <Wrapper>
-            <H1>정규세션 출석 리스트</H1>
+            <H1>러닝세션 출석 리스트</H1>
             <TableContainer>
                 <thead>
                     <tr>
@@ -181,4 +180,4 @@ const AttendancePatch = () => {
     );
 };
 
-export default AttendancePatch;
+export default AttendancePatch_Sa;

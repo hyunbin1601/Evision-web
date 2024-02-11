@@ -111,7 +111,7 @@ function NavBar() {
                 </Button>
               ):(
                 <Button href="/Login" className="fork-btn-inner">
-                  <AiOutlineLogin style={{marginBotton: "2px"}} /> Login
+                  <AiOutlineLogin style={{margin: "2px"}} /> Login
                 </Button>
               )}
             </Nav.Item>

@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import Leftbar from '../Leftbar_admin';
 
+const Wrapper = styled.div`
+    max-width: 800px;
+    margin: 0 auto;
+`;
 
 const H1 = styled.p`
     font-size: 2.3em;
     color: white;
     font-weight: bold;
     top: 120px;
-    left: 750px;
+    left: 200px;
     text-align: center;
     position: relative;
     width: 400px;
@@ -19,7 +24,7 @@ const TableContainer = styled.table`
     width: 400px;
     margin-bottom: 20px;
     top: 150px;
-    left: 750px;
+    left: 200px;
     position: relative;
 `;
 
@@ -42,10 +47,6 @@ const TableCell = styled.td`
     border: 1px solid #e6e6e6;
 `;
 
-const CheckboxInput = styled.input`
-    width: 20px;
-    height: 20px;
-`;
 
 
 const Button = styled.button`
@@ -70,50 +71,55 @@ const Button = styled.button`
 const Attendance = () => {
     const [names, setNames] = useState([]);
     const [attendanceData, setAttendanceData] = useState([]);
+    const [selected, setSelected] = useState("결석");
+    const selectedList = [
+        { value: "ABSENCE", name: "ABSENCE" },
+        { value: "ATTEND", name: "ATTEND" },
+        { value: "LATE", name: "LATE" },
+    ];
     const todayDate = new Date().toISOString().split('T')[0];
 
     useEffect(() => {
-        axios.get('')  //get 방식으로 요청을 보냄 -> 페이지가 렌더링 되자마자 실행
-            .then(response => setNames(response.data))
+        axios.get('/admin/members')  
+            .then(response => setNames(response.data.user))
             .catch(error => console.error(error));
 
         initializeAttendanceData();
     }, []);
 
     const initializeAttendanceData = () => {
-        const initialData = names.map(({ name, student_id }) => ({
-            name,
-            student_id,
-            attendance_status: false,
+        const initialData = names.map(({ name, id }) => ({
+            name: name,
+            student_id: id,
+            attendance_status: "ABSENCE",
+            todayDate: todayDate
         }));
         setAttendanceData(initialData);
     };
 
-    const handleCheckboxChange = (student_id) => {
-        const updatedData = attendanceData.map(data => {
-            if (data.student_id === student_id) {
-                return { ...data, attendance_status: !data.attendance_status };
-            }
-            return data;
-        });
-        setAttendanceData(updatedData);
-    };
+    const onHandleSelect = (e, student_id) => {
+        setAttendanceData(prevData => 
+            prevData.map(item => 
+                item.student_id === student_id ? {...item, attendance_status : e.target.value} : item
+                )
+            )
+    }
 
     const handleSave = () => {
-        const saveData = attendanceData.map(({ name, student_id, attendance_status, todayDate }) => ({
-            name,
-            student_id,
-            attendance_status,
-            todayDate
+        const saveData = attendanceData.map(({ student_id, attendance_status, todayDate }) => ({
+            id: student_id,
+            attendance_status: attendance_status,
+            todayDate: todayDate
         }));
 
-        axios.post('', saveData)
+        axios.post('/admin/attendance/thu', saveData)
             .then(response => console.log(response.data))
             .catch(error => console.error(error));
     };
 
     return (
-        <div>
+        <Wrapper>
+        <Leftbar />
             <H1>정규세션 출석체크</H1>
             <TableContainer>
                 <thead>
@@ -123,15 +129,17 @@ const Attendance = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {attendanceData.map(({ name, student_id, attendance_status }) => (
+                    {attendanceData.map(({ name, student_id }) => (
                         <TableRow key={student_id}>
                             <TableCell>{name}</TableCell>
                             <TableCell>
-                                <CheckboxInput
-                                    type="checkbox"
-                                    checked={attendance_status}    
-                                    onChange={() => handleCheckboxChange(student_id)}
-                                />
+                            <select onChange={(e) => onHandleSelect(e, student_id)} value={selected}>
+                                {selectedList.map((item) => {
+                                    return <option value={item.value} key={item.value}>
+                                        {item.name}
+                                    </option>;
+                                })}
+                            </select>
                             </TableCell>
                         </TableRow>
                     ))}
@@ -140,7 +148,7 @@ const Attendance = () => {
             <div>
                 <Button onClick={handleSave}>Save</Button>
             </div>
-        </div>
+        </Wrapper>
     );
 };
 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import Leftbar from '../Leftbar_admin';
 
 const RegisterBox = styled.div`
     background-color: #e6e6e6;
@@ -58,7 +59,7 @@ const Register = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
-    const [typeIsChecked, setTypeIsChecked] = useState(false);
+    const [studentType, setStudentType] = useState('');
     const [isAdmin, setIsAdmin] = useState(false);
 
     const handleRegister = () => {
@@ -67,17 +68,17 @@ const Register = () => {
             return;
         }
         axios
-        .post("", {
+        .post("/admin/members", {
             name: studentName,
-            user_id: studentId,
+            id: studentId,
             major: major,
             email: email,
             password: password,
-            isOb: typeIsChecked,
+            student_type: studentType,
             admin: isAdmin,
         })
         .then((response) => {
-            if(response.status === 200) {
+            if(response.data.success === true) {
                 return navigate("/MyPage");
             }
         })
@@ -88,6 +89,7 @@ const Register = () => {
 
     return (
         <RegisterBox>
+        <Leftbar />
         <Title>Register</Title>
         <InputBox>
         <Input
@@ -138,11 +140,11 @@ const Register = () => {
             />
         </InputBox>
         <InputBox>
-            <AdditionalText>ob</AdditionalText>
-            <RadioInput
-                type="radio"
-                checked={typeIsChecked}
-                onChange={() => setTypeIsChecked(!typeIsChecked)}
+            <Input
+                type="text"
+                placeholder="yb/ob"
+                value={studentType}
+                onChange={(e) => setStudentType(e.target.value)}
             />
         </InputBox>
         <InputBox>

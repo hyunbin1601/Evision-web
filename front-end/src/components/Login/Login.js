@@ -6,7 +6,7 @@ const LoginBox = styled.div`
     border-radius: 10px;
     padding: 20px;
     top: 218px;
-    left: 700px;
+    left: 750px;
     width: 450px;
     position: relative;
 `;

@@ -71,14 +71,14 @@ const Button = styled.button`
     position: relative;
 `;
 
-const AssignmentCheck = () => {
+const AssignmentCheckRun = () => {
     const [names, setNames] = useState([]);
     const [assignmentData, setAssignmentData] = useState([]);
     const [dateHeaders, setDateHeaders] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
-        axios.get('/admin/assignment/thu')
+        axios.get('/admin/assignment/sat')
             .then(response => {
                 const { names, assignmentData, dateHeaders } = extractData(response.data);
                 setNames(names);
@@ -135,8 +135,8 @@ const AssignmentCheck = () => {
         const saveData = assignmentData.map(({ name, id, assignment_status }) => ({
             name: name,
             id: id,
-            assignment_status: Object.entries(assignment_status).map(([date, value]) => ({  //객체:배열 구조로 만듦
-                [date]: value
+            assignment_status: Object.entries(assignment_status).map(([date, value]) => ({
+                [date] : value
             }))
         }));
 
@@ -188,4 +188,4 @@ const AssignmentCheck = () => {
     );
 };
 
-export default AssignmentCheck;
+export default AssignmentCheckRun;
