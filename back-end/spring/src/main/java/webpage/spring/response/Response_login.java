@@ -10,6 +10,6 @@ import webpage.spring.jwt.JwtToken;
 @AllArgsConstructor
 public class Response_login implements Response{
     private boolean success;
-    private JwtToken token;
+    private String token;
 
 }

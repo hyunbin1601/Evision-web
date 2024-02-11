@@ -12,6 +12,6 @@ import java.util.List;
 public class Response_s_l<T> implements Response{
 
     private boolean success;
-    private List<T> datas;
+    private List<T> user;
 
 }

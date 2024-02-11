@@ -9,8 +9,8 @@ import lombok.Setter;
 @Setter
 public class MemberCreateForm {
 
-    @NotNull(message = "사용자 ID는 필수 항목입니다.")
-    private Long id;
+    @NotEmpty(message = "사용자 ID는 필수 항목입니다.")
+    private String id;
 
     @NotEmpty(message = "사용자 이름은 필수 항목입니다.")
     private String name;
