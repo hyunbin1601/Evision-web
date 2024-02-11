@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import InfoList from './InfoList';
 import styled from 'styled-components';
 import axios from 'axios';
+import Leftbar from '../Leftbar_admin';
 
 const Wrapper = styled.div`
     max-width: 800px;
@@ -24,9 +25,11 @@ const H1 = styled.p`
 const UsersList = () => {
     const [userInfos, setUserInfos] = useState([]);
     useEffect(() => {
-        axios.get("/api/userInfo")
+        axios.get("/admin/members")
             .then(response => {
-                setUserInfos(response.data);
+                if(response.data.success === true) {
+                    setUserInfos(response.data.user);
+                }
             })
             .catch(err => console.log(err))
     }, [])
@@ -40,6 +43,7 @@ const UsersList = () => {
 
     return (
         <Wrapper>
+        <Leftbar />
             <H1>회원 정보 목록</H1>
             <InfoList userInfos={userInfos} handleSave={handleSave}/>
         </Wrapper>

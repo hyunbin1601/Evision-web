@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
+import Leftbar from '../Leftbar_admin';
 
+const Wrapper = styled.div`
+    max-width: 800px;
+    margin: 0 auto;
+`;
 
 const H1 = styled.p`
     font-size: 2.3em;
     color: white;
     font-weight: bold;
     top: 120px;
-    left: 750px;
+    left: 200px;
     text-align: center;
     position: relative;
     width: 400px;
@@ -19,7 +24,7 @@ const TableContainer = styled.table`
     width: 400px;
     margin-bottom: 20px;
     top: 150px;
-    left: 750px;
+    left: 200px;
     position: relative;
 `;
 
@@ -39,12 +44,9 @@ const TableRow = styled.tr`
 
 const TableCell = styled.td`
     padding: 12px;
+    border: 1px solid #e6e6e6;
 `;
 
-const CheckboxInput = styled.input`
-    width: 20px;
-    height: 20px;
-`;
 
 
 const Button = styled.button`
@@ -66,56 +68,57 @@ const Button = styled.button`
     position: relative;
 `;
 
-const AttendanceRun = () => {
+const Attendance_Run = () => {
     const [names, setNames] = useState([]);
     const [attendanceData, setAttendanceData] = useState([]);
+    const [selected, setSelected] = useState("ABSENCE");
+    const selectedList = [
+        { value: "ABSENCE", name: "ABSENCE" },
+        { value: "ATTEND", name: "ATTEND" },
+    ];
     const todayDate = new Date().toISOString().split('T')[0];
 
     useEffect(() => {
-        axios.get('')
-            .then(response => setNames(response.data))
+        axios.get('/admin/members')  //get 방식으로 요청을 보냄 -> 페이지가 렌더링 되자마자 실행
+            .then(response => setNames(response.data.user))
             .catch(error => console.error(error));
 
         initializeAttendanceData();
     }, []);
 
     const initializeAttendanceData = () => {
-        const initialData = names.map(({ name, student_id }) => ({
-            name,
-            student_id,
-            attendanceCheck: false,
-            todayDate
+        const initialData = names.map(({ name, id }) => ({
+            name: name,
+            student_id: id,
+            attendance_status: "ABSENCE",
+            todayDate: todayDate
         }));
         setAttendanceData(initialData);
     };
 
-    const handleCheckboxChange = (student_id) => {
-        const updatedData = attendanceData.map(data => {
-            if (data.student_id === student_id) {
-                return { ...data, attendanceCheck: !data.attendanceCheck };
-            }
-            return data;
-        });
-        setAttendanceData(updatedData);
-    };
+    const onHandleSelect = (e, student_id) => {
+        setAttendanceData(prevData => 
+            prevData.map(item => 
+                item.student_id === student_id ? {...item, attendance_status : e.target.value} : item
+                )
+            )
+    }
 
     const handleSave = () => {
-        const sessionId = "Sun";
-        const saveData = attendanceData.map(({ name, student_id, attendanceCheck, todayDate }) => ({
-            name,
-            student_id,
-            attendanceCheck,
-            todayDate,
-            sessionId
+        const saveData = attendanceData.map(({ student_id, attendance_status, todayDate }) => ({
+            id: student_id,
+            attendance_status: attendance_status,
+            todayDate: todayDate
         }));
 
-        axios.post('', saveData)   //api에게 saveData를 보내줌, 러닝세션 출석 용도라 변수 sessionId는 필요할까..?
-            .then(response => console.log(response.data))   //서버와의 통신 부분
+        axios.post('/admin/attendance/sat', saveData)
+            .then(response => console.log(response.data))
             .catch(error => console.error(error));
     };
 
     return (
-        <div>
+        <Wrapper>
+        <Leftbar />
             <H1>러닝세션 출석체크</H1>
             <TableContainer>
                 <thead>
@@ -125,15 +128,17 @@ const AttendanceRun = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {attendanceData.map(({ name, student_id, attendanceCheck }) => (
+                    {attendanceData.map(({ name, student_id }) => (
                         <TableRow key={student_id}>
                             <TableCell>{name}</TableCell>
                             <TableCell>
-                                <CheckboxInput
-                                    type="checkbox"
-                                    checked={attendanceCheck}
-                                    onChange={() => handleCheckboxChange(student_id)}
-                                />
+                            <select onChange={(e) => onHandleSelect(e, student_id)} value={selected}>
+                                {selectedList.map((item) => {
+                                    return <option value={item.value} key={item.value}>
+                                        {item.name}
+                                    </option>;
+                                })}
+                            </select>
                             </TableCell>
                         </TableRow>
                     ))}
@@ -142,8 +147,8 @@ const AttendanceRun = () => {
             <div>
                 <Button onClick={handleSave}>Save</Button>
             </div>
-        </div>
+        </Wrapper>
     );
 };
 
-export default AttendanceRun;
+export default Attendance_Run;

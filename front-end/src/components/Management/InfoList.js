@@ -3,11 +3,11 @@ import axios from 'axios';
 import styled from 'styled-components';
 
 const Table = styled.table`
-    width: 600px;
+    width: 770px;
     border-collapse: collapse;
     margin-bottom: 20px;
     top: 150px;
-    left: 100px;
+    left: 50px;
     position: relative;
 `;
 
@@ -61,7 +61,7 @@ const Wrapper = styled.div`
 const InfoList = ({ userInfos, handleSave }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedValues, setEditedValues] = useState({});
-    const [selectedIds, setSelectedIds] = useState([]);
+    const [selectedId, setSelectedId] = useState(null);
 
     const handleInputChange = (field, value, studentId) => {
         setEditedValues((prevValues) => ({
@@ -74,8 +74,20 @@ const InfoList = ({ userInfos, handleSave }) => {
     };
 
     const handleSaveClick = () => {
+        const editedData = userInfos.map((userInfo) => ({
+            id: editedValues[userInfo.student_id]?.id ?? userInfo.id,
+            name: editedValues[userInfo.student_id]?.name ?? userInfo.name,
+            student_type: editedValues[userInfo.student_id]?.student_type ?? userInfo.student_type,
+            major: editedValues[userInfo.student_id]?.major ?? userInfo.major,
+            email: editedValues[userInfo.student_id]?.email ?? userInfo.email,
+            password: editedValues[userInfo.student_id]?.password ?? userInfo.password,
+            fine: editedValues[userInfo.student_id]?.fine ?? userInfo.fine,
+            total_settlement: editedValues[userInfo.student_id]?.total_settlement ?? userInfo.total_settlement,
+            admin: editedValues[userInfo.student_id]?.admin ?? userInfo.admin
+        }));
+
         axios
-            .patch('/api/save', { editedValues })
+            .patch('/admin/members', editedData)
             .then((response) => {
                 console.log('');
             })
@@ -86,27 +98,26 @@ const InfoList = ({ userInfos, handleSave }) => {
     };
 
     const handleDeleteClick = () => {
-        if (selectedIds.length === 0) {
+        if (!selectedId) {
             alert('삭제할 대상을 선택해 주세요.');
             return;
         }
 
-        axios.delete('/api/delete', { data: { studentIds: selectedIds } })
+        const dataToDelete = { id: selectedId };
+
+        axios.delete('/admin/members', { data: dataToDelete })  //req.body {}로 인식됨
             .then((response) => {
                 const updatedUserInfos = userInfos.filter(
-                    (userInfo) => !selectedIds.includes(userInfo.studentId)
+                    (userInfo) => userInfo.studentId !== selectedId
                 );
                 handleSave(updatedUserInfos);
-                setSelectedIds([]);
+                setSelectedId(null);
             })
             .catch((error) => console.error(error));
     };
 
     const handleCheckboxChange = (studentId) => {
-        const updatedIds = selectedIds.includes(studentId)
-            ? selectedIds.filter((id) => id !== studentId)
-            : [...selectedIds, studentId];
-        setSelectedIds(updatedIds);
+        setSelectedId(studentId);
     };
 
     return (
@@ -118,6 +129,7 @@ const InfoList = ({ userInfos, handleSave }) => {
                         <Th>이름</Th>
                         <Th>학번</Th>
                         <Th>이메일</Th>
+                        <Th>비밀번호</Th>
                         <Th>yb/ob</Th>
                         <Th>벌금</Th>
                         <Th>총 정산</Th>
@@ -125,12 +137,12 @@ const InfoList = ({ userInfos, handleSave }) => {
                 </thead>
                 <tbody>
                     {userInfos.map((userInfo) => (
-                        <tr key={userInfo.studentId}>
+                        <tr key={userInfo.id}>
                             <Td>
                                 <input
                                     type="checkbox"
-                                    checked={selectedIds.includes(userInfo.studentId)}
-                                    onChange={() => handleCheckboxChange(userInfo.studentId)}
+                                    checked={selectedId.includes(userInfo.id)}
+                                    onChange={() => handleCheckboxChange(userInfo.id)}
                                 />
                             </Td>
                             <Td>
@@ -140,7 +152,7 @@ const InfoList = ({ userInfos, handleSave }) => {
                                         defaultValue={userInfo.name}
                                         style={{ width: "100%" }}
                                         onChange={(e) =>
-                                            handleInputChange('name', e.target.value, userInfo.studentId)
+                                            handleInputChange('name', e.target.value, userInfo.id)
                                         }
                                     />
                                 ) : (
@@ -148,18 +160,7 @@ const InfoList = ({ userInfos, handleSave }) => {
                                 )}
                             </Td>
                             <Td>
-                                {isEditing ? (
-                                    <input
-                                        type="text"
-                                        defaultValue={userInfo.studentId}
-                                        style={{ width: "100%" }}
-                                        onChange={(e) =>
-                                            handleInputChange('studentId', e.target.value, userInfo.studentId)
-                                        }
-                                    />
-                                ) : (
-                                    userInfo.studentId
-                                )}
+                                userInfo.id
                             </Td>
                             <Td>
                                 {isEditing ? (
@@ -168,7 +169,7 @@ const InfoList = ({ userInfos, handleSave }) => {
                                         defaultValue={userInfo.email}
                                         style={{ width: "100%" }}
                                         onChange={(e) =>
-                                            handleInputChange('email', e.target.value, userInfo.studentId)
+                                            handleInputChange('email', e.target.value, userInfo.id)
                                         }
                                     />
                                 ) : (
@@ -179,14 +180,28 @@ const InfoList = ({ userInfos, handleSave }) => {
                                 {isEditing ? (
                                     <input
                                         type="text"
-                                        defaultValue={userInfo.year}
+                                        defaultValue={userInfo.password}
                                         style={{ width: "100%" }}
                                         onChange={(e) =>
-                                            handleInputChange('year', e.target.value, userInfo.studentId)
+                                            handleInputChange('password', e.target.value, userInfo.id)
                                         }
                                     />
                                 ) : (
-                                    userInfo.name
+                                    userInfo.password
+                                )}
+                            </Td>
+                            <Td>
+                                {isEditing ? (
+                                    <input
+                                        type="text"
+                                        defaultValue={userInfo.student_type}
+                                        style={{ width: "100%" }}
+                                        onChange={(e) =>
+                                            handleInputChange('student_type', e.target.value, userInfo.id)
+                                        }
+                                    />
+                                ) : (
+                                    userInfo.student_type
                                 )}
                             </Td>
                             <Td>
@@ -196,7 +211,7 @@ const InfoList = ({ userInfos, handleSave }) => {
                                         defaultValue={userInfo.fine}
                                         style={{ width: "100%" }}
                                         onChange={(e) =>
-                                            handleInputChange('fine', e.target.value, userInfo.studentId)
+                                            handleInputChange('fine', e.target.value, userInfo.id)
                                         }
                                     />
                                 ) : (
@@ -207,14 +222,28 @@ const InfoList = ({ userInfos, handleSave }) => {
                                 {isEditing ? (
                                     <input
                                         type="text"
-                                        defaultValue={userInfo.price}
+                                        defaultValue={userInfo.total_settlement}
                                         style={{ width: "100%" }}
                                         onChange={(e) =>
-                                            handleInputChange('price', e.target.value, userInfo.studentId)
+                                            handleInputChange('totalSettlement', e.target.value, userInfo.id)
                                         }
                                     />
                                 ) : (
-                                    userInfo.price
+                                    userInfo.total_settlement
+                                )}
+                            </Td>
+                            <Td>
+                                {isEditing ? (
+                                    <input
+                                        type="checkbox"
+                                        defaultChecked={userInfo.admin}
+                                        style={{ width: "20px", height: "20px" }}
+                                        onChange={(e) =>
+                                            handleInputChange('admin', e.target.checked, userInfo.id)
+                                        }
+                                    />
+                                ) : (
+                                    <input type="checkbox" defaultChecked={userInfo.admin} disabled={true}></input>
                                 )}
                             </Td>
                         </tr>

@@ -17,10 +17,9 @@
     "react-icons": "^4.8.0",
     "react-parallax-tilt": "^1.7.42",
     "react-pdf": "^5.7.1",
-    "react-router-dom": "^6.21.3",
+    "react-router-dom": "^6.22.0",
     "react-scripts": "5.0.0",
     "react-tsparticles": "^1.42.2",
-    "styled-component": "^2.8.0",
     "styled-components": "^6.1.8",
     "typewriter-effect": "^2.18.2",
     "web-vitals": "^2.1.4"
