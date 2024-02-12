@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import Leftbar from '../Leftbar_admin';
 
 const Wrapper = styled.div`
     max-width: 800px;
@@ -76,6 +77,12 @@ const AttendancePatch = () => {
     ];
     const token = localStorage.getItem('token');
     const config = { headers: { "Authorization" : `Bearer ${token}` } }
+    const changeDate = (todayDate) => {
+        const date = new Date(todayDate);
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        return `${month}/${day}`;
+    };
 
     useEffect(() => {
         axios.get('/admin/attendance', config)
@@ -84,8 +91,9 @@ const AttendancePatch = () => {
                     const filteredList = response.data.member_attendance.filter(item => item.session_type === 'thr');
                     setAttendanceList(filteredList);
                     const { names, dateHeaders } = extractData(filteredList);
+                    const changeDateHeaders = dateHeaders.map(changeDate);
                     setNames(names);
-                    setDateHeaders(dateHeaders);
+                    setDateHeaders(changeDateHeaders);
                 }
             })
             .catch(error => console.error(error));
@@ -144,6 +152,7 @@ const AttendancePatch = () => {
 
     return (
         <Wrapper>
+        <Leftbar />
             <H1>정규세션 출석 리스트</H1>
             <TableContainer>
                 <thead>

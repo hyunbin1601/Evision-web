@@ -72,18 +72,32 @@ const Button = styled.button`
 `;
 
 const AssignmentCheck = () => {
+    const [assignmentList, setAssignmentList] = useState([]);
     const [names, setNames] = useState([]);
-    const [assignmentData, setAssignmentData] = useState([]);
     const [dateHeaders, setDateHeaders] = useState([]);
     const [isEditing, setIsEditing] = useState(false);
+    const [modifiedList, setModifiedList] = useState([]);
+
+    const token = localStorage.getItem('token');
+    const config = { headers: { "Authorization" : `Bearer ${token}` } }
+    const changeDate = (todayDate) => {
+        const date = new Date(todayDate);
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        return `${month}/${day}`;
+    };
 
     useEffect(() => {
-        axios.get('/admin/assignment/thu')
+        axios.get('/admin/assignment', config)
             .then(response => {
-                const { names, assignmentData, dateHeaders } = extractData(response.data);
-                setNames(names);
-                setAssignmentData(assignmentData);
-                setDateHeaders(dateHeaders);
+                if(response.data.success === true) {
+                    const filteredList = response.data.member_assignment.filter(item => item.session_type === 'thr');
+                    setAssignmentList(filteredList);
+                    const { names, dateHeaders } = extractData(filteredList);
+                    const changeDateHeaders = dateHeaders.map(changeDate);
+                    setNames(names);
+                    setDateHeaders(changeDateHeaders);
+                }
             })
             .catch(error => console.error(error));
     }, []);
@@ -91,24 +105,17 @@ const AssignmentCheck = () => {
     const extractData = (rawData) => {
         const extractedData = {
             names: [],
-            assignmentData: [],
             dateHeaders: [],
         };
 
-        rawData.names.forEach(name => {
-            extractedData.names.push(name);
-        });
 
-        rawData.assignmentData.forEach(data => {
-            const { name, id, assignment_status } = data;
-            const newData = { name, id };
-            Object.entries(assignment_status).forEach(([date, value]) => {
-                if (!extractedData.dateHeaders.includes(date)) {
-                    extractedData.dateHeaders.push(date);
-                }
-                newData[date] = value;
-            });
-            extractedData.assignmentData.push(newData);
+        rawData.forEach(data => {
+            if(!names.includes(data.name)) {
+                names.push(data.name)
+            }
+            if(!dateHeaders.includes(data.todayDate)) {
+                dateHeaders.push(data.todayDate)
+            }
         });
 
         extractedData.dateHeaders.sort((a, b) => new Date(a) - new Date(b));
@@ -116,68 +123,84 @@ const AssignmentCheck = () => {
         return extractedData;
     };
 
-    const handleCheckboxChange = (id, date) => {
-        if (isEditing) {
-            const updatedData = assignmentData.map(data => {
-                const newData = { ...data };
-                newData.assignment_status[date] = !newData.assignment_status[date];
-                return newData;
-            });
-            setAssignmentData(updatedData);
+    // const handleCellChange = (id, todayDate, newStatus) => {
+    //     setAssignmentList(prevList =>
+    //         prevList.map(data =>
+    //             data.id === id && data.todayDate === todayDate
+    //                 ? { ...data, assignment_status: newStatus }
+    //                 : data
+    //         )
+    //     );
+    // };
+
+    const handleCellChange = (id, todayDate, newStatus) => {
+        const updatedData = { id: id, date: todayDate, assignment_status: newStatus };
+        const existingIndex = modifiedList.findIndex(item => item.id === id && item.date === todayDate);
+        
+        if (existingIndex !== -1) {
+            const newData = [...modifiedList];
+            newData[existingIndex] = updatedData;
+            setModifiedList(newData);
+        } else {
+            setModifiedList(prevData => [...prevData, updatedData]);
         }
     };
 
-    const handleEditClick = () => {
-        setIsEditing(true);
-    };
-
-    const handleSaveClick = () => {
-        const saveData = assignmentData.map(({ name, id, assignment_status }) => ({
-            name: name,
-            id: id,
-            assignment_status: Object.entries(assignment_status).map(([date, value]) => ({  //객체:배열 구조로 만듦
-                [date]: value
-            }))
-        }));
-
-        axios.patch('', { saveData })
+    const handleSaveChanges = () => {
+        // const modifiedData = assignmentList.map(({ id, todayDate, assignment_status }) => ({
+        //     id: id,
+        //     todayDate: todayDate,
+        //     assignment_status: assignment_status
+        // }));
+        axios.patch('/admin/assignment', modifiedList, config)
             .then(response => {
-                console.log(response.data);
-                setIsEditing(false);
+                if(response.data.success === true) {
+                    console.log(response)
+                    window.location.reload();
+                }
+                else {
+                    alert("과제 수정에 실패하였습니다.");
+                }
             })
             .catch(error => console.error(error));
+    };
+
+    const handleEditChanges = () => {
+        setIsEditing(true);
     };
 
     return (
         <Wrapper>
         <Leftbar />
-            <H1>정규세션 과제확인</H1>
+            <H1>정규세션 과제제출 확인</H1>
             {isEditing ? (
-                <Button onClick={handleSaveClick}>Save</Button>
+                <Button onClick={handleSaveChanges}>Save</Button>
             ) : (
-                <Button onClick={handleEditClick}>Edit</Button>
+                <Button onClick={handleEditChanges}>Edit</Button>
             )}
             <TableContainer>
                 <thead>
                     <tr>
                         <TableHead>이름</TableHead>
-                        {dateHeaders.map(date => (
-                            <TableHead key={date}>{date}</TableHead>
+                        {dateHeaders.map((date) => (
+                            <TableHead>{date}</TableHead>
                         ))}
                     </tr>
                 </thead>
                 <tbody>
-                    {assignmentData.map(({ name, id, assignment_status }) => (
-                        <TableRow key={id}>
-                            <TableCell>{name}</TableCell>
-                            {dateHeaders.map(date => (
+                {assignmentList.map((item) => (
+                        <TableRow key={item.id}>
+                            <TableCell key={item.name}>{item.name}</TableCell>
+                            {dateHeaders.map((date) => (
                                 <TableCell key={date}>
-                                    <CheckboxInput
+                                    {assignmentList.filter(data => data.id === item.id && changeDate(data.todayDate) === date).map((data) => (
+                                        <CheckboxInput
                                         type="checkbox"
-                                        checked={assignment_status[date]}
-                                        onChange={() => handleCheckboxChange(id, date)}
+                                        checked={data.assignment_status}
+                                        onChange={(e) => handleCellChange(data.id, data.todayDate, e.target.checked)}
                                         readOnly={!isEditing}
-                                    />
+                                        />
+                                    ))}
                                 </TableCell>
                             ))}
                         </TableRow>

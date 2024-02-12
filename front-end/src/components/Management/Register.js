@@ -4,12 +4,17 @@ import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import Leftbar from '../Leftbar_admin';
 
+const Wrapper = styled.div`
+    max-width: 800px;
+    margin: 0 auto;
+`;
+
 const RegisterBox = styled.div`
     background-color: #e6e6e6;
     border-radius: 10px;
     padding: 20px;
-    top: 218px;
-    left: 735px;
+    top: 150px;
+    left: 250px;
     width: 450px;
     position: relative;
 `;
@@ -88,8 +93,9 @@ const Register = () => {
     };
 
     return (
-        <RegisterBox>
+        <Wrapper>
         <Leftbar />
+        <RegisterBox>
         <Title>Register</Title>
         <InputBox>
         <Input
@@ -157,6 +163,7 @@ const Register = () => {
         </InputBox>
         <RegisterButton onClick={handleRegister}>Register</RegisterButton>
         </RegisterBox>
+        </Wrapper>
     );
 };
 
