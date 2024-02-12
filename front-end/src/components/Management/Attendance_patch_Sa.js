@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
+import Leftbar from '../Leftbar_admin';
 
 const Wrapper = styled.div`
     max-width: 800px;
@@ -75,6 +76,12 @@ const AttendancePatch_Sa = () => {
     ];
     const token = localStorage.getItem('token');
     const config = { headers: { "Authorization" : `Bearer ${token}` } }
+    const changeDate = (todayDate) => {
+        const date = new Date(todayDate);
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        return `${month}/${day}`;
+    };
 
     useEffect(() => {
         axios.get('/admin/attendance', config)
@@ -83,8 +90,9 @@ const AttendancePatch_Sa = () => {
                     const filteredList = response.data.member_attendance.filter(item => item.session_type === 'sat');
                     setAttendanceList(filteredList);
                     const { names, dateHeaders } = extractData(filteredList);
+                    const changeDateHeaders = dateHeaders.map(changeDate);
                     setNames(names);
-                    setDateHeaders(dateHeaders);
+                    setDateHeaders(changeDateHeaders);
                 }
             })
             .catch(error => console.error(error));
@@ -96,7 +104,7 @@ const AttendancePatch_Sa = () => {
             dateHeaders: [],
         };
 
-
+//map 객체가 개쩌는것 -> 원래 삽입 순서를 기억함
         rawData.forEach(data => {
             if(!names.includes(data.name)) {
                 names.push(data.name)
@@ -143,6 +151,7 @@ const AttendancePatch_Sa = () => {
 
     return (
         <Wrapper>
+        <Leftbar />
             <H1>러닝세션 출석 리스트</H1>
             <TableContainer>
                 <thead>

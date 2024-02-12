@@ -71,7 +71,7 @@ function NavBar() {
             </Nav.Item>
 
             <Nav.Item>
-              <Nav.Link as={Link} to="/Recruting" onClick={() => updateExpanded(false)}>
+              <Nav.Link as={Link} to="/Recruiting" onClick={() => updateExpanded(false)}>
                 <ImBlog style={{ marginBottom: "2px" }} /> Recruting
               </Nav.Link>
             </Nav.Item>
