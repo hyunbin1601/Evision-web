@@ -17,7 +17,7 @@ import Login from "./components/Login/Login"
 import UsersList from "./components/Management/UsersList"
 import AttendancePatch from "./components/Management/Attendance_patch";
 import AttendancePatchRun from "./components/Management/Attendance_patch_Sa"
-import AssignmentCheckSu from "./components/Management/AssignmentCheck-Sa";
+import AssignmentCheckSa from "./components/Management/AssignmentCheck-Sa";
 import AssignmentCheck from "./components/Management/AssignmentCheck-Th"
 import Register from "./components/Management/Register"
 import AttendanceRun from "./components/Management/Attendance_Run"
@@ -55,7 +55,7 @@ function App() {
           <Route path="/Management/UsersList" element={<UsersList />} />
           <Route path="/Management/AttendancePatch" element={<AttendancePatch/>} />
           <Route path="/Management/AttendancePatch_Run" element={<AttendancePatchRun/>} />
-          <Route path="/Management/AssignmentCheck_Run" element={<AssignmentCheckSu />} />
+          <Route path="/Management/AssignmentCheck_Run" element={<AssignmentCheckSa />} />
           <Route path="/Management/AssignmentCheck" element={<AssignmentCheck />} />
           <Route path="/Management/Register" element={<Register />} />
           <Route path="/Recruiting" element={<Recruiting />} />

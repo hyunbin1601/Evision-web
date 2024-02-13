@@ -24,11 +24,18 @@ const H1 = styled.p`
 
 const UsersList = () => {
     const [userInfos, setUserInfos] = useState([]);
+    const token = localStorage.getItem('token')
+    const config = { headers: { "Authorization" : `Bearer ${token}` } }
+
     useEffect(() => {
-        axios.get("/admin/members")
+        axios.get("/admin/members", config)
             .then(response => {
                 if(response.data.success === true) {
                     setUserInfos(response.data.user);
+                }
+                else {
+                    alert("권한이 없습니다");
+                    window.location.reload('/');
                 }
             })
             .catch(err => console.log(err))

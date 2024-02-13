@@ -76,11 +76,29 @@ const Attendance_Run = () => {
         { value: "ABSENCE", name: "ABSENCE" },
         { value: "ATTEND", name: "ATTEND" },
     ];
+    const token = localStorage.getItem('token');
     const todayDate = new Date().toISOString().split('T')[0];
+    const config = { headers: { "Authorization" : `Bearer ${token}` } }
+
+    // useEffect(() => {
+    //     axios.get('/admin/members', config)  //get 방식으로 요청을 보냄 -> 페이지가 렌더링 되자마자 실행
+    //         .then(response => setNames(response.data.user))
+    //         .catch(error => console.error(error));
+
+    //     initializeAttendanceData();
+    // }, []);
 
     useEffect(() => {
-        axios.get('/admin/members')  //get 방식으로 요청을 보냄 -> 페이지가 렌더링 되자마자 실행
-            .then(response => setNames(response.data.user))
+        axios.get('/admin/members', config)  
+            .then(response => {
+                if(response.data.success === true) {
+                    setNames(response.data.user)
+                }
+                else {
+                    alert("권한이 없습니다");
+                    window.location.reload('/');
+                }
+            })
             .catch(error => console.error(error));
 
         initializeAttendanceData();

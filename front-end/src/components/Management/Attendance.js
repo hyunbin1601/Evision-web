@@ -78,9 +78,11 @@ const Attendance = () => {
         { value: "LATE", name: "LATE" },
     ];
     const todayDate = new Date().toISOString().split('T')[0];
+    const token = localStorage.getItem('token')
+    const config = { headers: { "Authorization" : `Bearer ${token}` } }
 
     useEffect(() => {
-        axios.get('/admin/members')  
+        axios.get('/admin/members', config)  
             .then(response => setNames(response.data.user))
             .catch(error => console.error(error));
 

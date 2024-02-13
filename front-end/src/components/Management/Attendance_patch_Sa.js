@@ -94,6 +94,10 @@ const AttendancePatch_Sa = () => {
                     setNames(names);
                     setDateHeaders(changeDateHeaders);
                 }
+                else {
+                    alert("권한이 없습니다.")
+                    window.location.reload('/');
+                }
             })
             .catch(error => console.error(error));
     }, []);
