@@ -32,16 +32,24 @@ function NavBar() {
 
   window.addEventListener("scroll", scrollHandler);
 
-  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("userToken"));
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
 
-  const handleLogout = async () => {
-    try {
-      await axios.get("");
-    }
-    catch (e) {
-      console.log(e)
-    }
-  }
+  const handleLogout = () => {
+    axios.delete("/logout")
+      .then(response => {
+        if (response.data.success === true) {
+          localStorage.removeItem("token");
+          setIsLoggedIn(false);
+          window.location.href = "/"; 
+        } 
+        else {
+          alert("로그아웃 실패"); 
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
 
   return (
     <Navbar

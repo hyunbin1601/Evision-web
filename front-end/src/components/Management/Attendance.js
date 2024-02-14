@@ -78,10 +78,20 @@ const Attendance = () => {
         { value: "LATE", name: "LATE" },
     ];
     const todayDate = new Date().toISOString().split('T')[0];
+    const token = localStorage.getItem('token');
+    const config = { headers: { "Authorization" : `Bearer ${token}` } };
 
     useEffect(() => {
-        axios.get('/admin/members')  
-            .then(response => setNames(response.data.user))
+        axios.get('/admin/members', config)  
+            .then(response => {
+                if(response.data.success === true) {
+                    setNames(response.data.user)
+                }
+                else {
+                    alert("권한이 없습니다");
+                    window.location.reload('/');
+                }
+            })
             .catch(error => console.error(error));
 
         initializeAttendanceData();
@@ -112,8 +122,16 @@ const Attendance = () => {
             todayDate: todayDate
         }));
 
-        axios.post('/admin/attendance/thu', saveData)
-            .then(response => console.log(response.data))
+        axios.post('/admin/attendance/thu', saveData, config)
+            .then(response => {
+                if(response.data.success === true) {
+                    console.log(response.data)
+                    window.location.reload();
+                }
+                else {
+                    console.error('error')
+                }
+            })
             .catch(error => console.error(error));
     };
 
@@ -133,7 +151,7 @@ const Attendance = () => {
                         <TableRow key={student_id}>
                             <TableCell>{name}</TableCell>
                             <TableCell>
-                            <select onChange={(e) => onHandleSelect(e, student_id)} value={selected}>
+                            <select onChange={(e) => onHandleSelect(e, student_id)} value={student_id}>
                                 {selectedList.map((item) => {
                                     return <option value={item.value} key={item.value}>
                                         {item.name}
