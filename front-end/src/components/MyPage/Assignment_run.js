@@ -37,7 +37,7 @@ const AssignmentContainer = styled.div`
 
 
 
-const Assignment = () => {
+const Assignment_run = () => {
     const [link, setLink] = useState('');
     const [isOkay, setIsOkay] = useState(false);  //isOkay는 과제제출 후 표시
     const [token, setToken] = useState('');
@@ -94,7 +94,7 @@ const Assignment = () => {
           {pageOpen === true ? (
             <>
             {/*뭔가 과제 제출까지 얼마 남았는지 표시해줘도 좋을 것 같다*/}
-            {isOkay ? <h1><strong>정규 세션<br />과제 링크 수정</strong></h1>: <h1><strong>정규 세션<br />과제 링크 제출</strong></h1>}
+            {isOkay ? <h1><strong>러닝 세션<br />과제 링크 수정</strong></h1>: <h1><strong>정규 세션<br />과제 링크 제출</strong></h1>}
             <input
                 type='text'
                 name='link'
@@ -120,4 +120,4 @@ const Assignment = () => {
 
 
 
-export default Assignment;
+export default Assignment_run;
