@@ -62,6 +62,8 @@ const InfoList = ({ userInfos, handleSave }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedValues, setEditedValues] = useState({});
     const [selectedId, setSelectedId] = useState(null);
+    const token = localStorage.getItem('token');
+    const config = { headers: { "Authorization" : `Bearer ${token}` } };
 
     const handleInputChange = (field, value, studentId) => {
         setEditedValues((prevValues) => ({
@@ -87,9 +89,15 @@ const InfoList = ({ userInfos, handleSave }) => {
         }));
 
         axios
-            .patch('/admin/members', editedData)
+            .patch('/admin/members', editedData, config)
             .then((response) => {
-                console.log('');
+                if(response.data.success === true) {
+                    console.log('회원정보 수정')
+                    window.location.reload();
+                }
+                else {
+                    alert('회원 수정에 실패하였습니다.')
+                }
             })
             .catch((error) => console.error(error));
 
@@ -105,13 +113,19 @@ const InfoList = ({ userInfos, handleSave }) => {
 
         const dataToDelete = { id: selectedId };
 
-        axios.delete('/admin/members', { data: dataToDelete })  //req.body {}로 인식됨
+        axios.delete('/admin/members', { data: dataToDelete }, config)  //req.body {}로 인식됨
             .then((response) => {
-                const updatedUserInfos = userInfos.filter(
-                    (userInfo) => userInfo.studentId !== selectedId
-                );
-                handleSave(updatedUserInfos);
-                setSelectedId(null);
+                if(response.data.success === true) {
+                    const updatedUserInfos = userInfos.filter(
+                        (userInfo) => userInfo.studentId !== selectedId
+                    );
+                    handleSave(updatedUserInfos);
+                    setSelectedId(null);
+                    window.location.reload();
+                }
+                else {
+                    alert('회원 삭제에 실패하였습니다.');
+                }
             })
             .catch((error) => console.error(error));
     };
