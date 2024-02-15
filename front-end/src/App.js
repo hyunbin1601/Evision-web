@@ -26,6 +26,10 @@ import Recruiting from "./components/Recruiting/Recruiting"
 import Home from "./components/Home/Home"
 import AttendanceStatus from "./components/MyPage/AttendanceStatus";
 import Assignment from "./components/MyPage/Assignment";
+import Assignment_run from "./components/MyPage/Assignment_run"
+import AttendanceStatus from "./components/MyPage/AttendanceStatus";
+import Assignment from "./components/MyPage/Assignment";
+
 
 
 
@@ -60,6 +64,9 @@ function App() {
           <Route path="/Management/AssignmentCheck" element={<AssignmentCheck />} />
           <Route path="/Management/Register" element={<Register />} />
           <Route path="/Recruiting" element={<Recruiting />} />
+          <Route path='/Mypage/AttendanceStatus' element={<AttendanceStatus />} />
+          <Route path='/Mypage/Assignment' element={<Assignment />} />
+          <Route path='/Mypage/Assignment_run' element={<Assignment_run />} />
           <Route path='/Mypage/AttendanceStatus' element={<AttendanceStatus />} />
           <Route path='/Mypage/Assignment' element={<Assignment />} />
         </Routes>
