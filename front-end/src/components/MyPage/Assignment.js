@@ -40,55 +40,51 @@ const AssignmentContainer = styled.div`
 const Assignment = () => {
     const [link, setLink] = useState('');
     const [isOkay, setIsOkay] = useState(false);  //isOkay는 과제제출 후 표시
-    const [token, setToken] = useState('');
+    const token = localStorage.getItem('token');
     const [pageOpen,setPageOpen] = useState(false); // pageOpen은 목, 토에만 열림. 이 값에 따라 페이지 열리게 만듬
     const config = { headers: { "Authorization" : `Bearer ${token}` } }
+    const todayDate = new Date().toISOString().split('T')[0];
+    const [id, setId] = useState('');
 
-    useEffect(async () => {
-      const storedToken = localStorage.getItem('token');
-
-      if(storedToken) {
-        setToken(storedToken);
-      }
-      const response = await axios.get('', config);
-      if (response.data.success === false) {
-        alert("권한이 없습니다");
-        window.location.redirect("/");
-      }
-      else {
-        setIsOkay(response.data.isOkay);
-        setPageOpen(response.data.pageOpen);
-      }
-    }, []); 
+    useEffect(() => {
+      axios.get('/users/mypage/assignment', config)  
+          .then(response => {
+              if(response.data.success === true) {
+                  setPageOpen(response.data.pageOpen);
+                  setIsOkay(response.data.isOkay);
+                  setId(response.data.id);
+              }
+              else {
+                  alert("권한이 없습니다");
+                  window.location.reload('/');
+              }
+          })
+          .catch(error => console.error(error));
+  }, []);
  
 
     const SubmitAssignment = async () => {
-     {/*   try{
-            
-            const response = await axios.post('서버 주소', {
-              submission_link: link,
-              todayDate : new Date().toISOString().split('T')[0],
-            }, {
-              headers: {
-                `Authorization`: 'Bearer ${token}'
-              }
-            });
-
-            if(response.data.isOkay === true) {   //과제 제출 여부에 따라 제출 혹은 수정 띄움
+      try{
+        const response = await axios.post('/users/mypage/assignment', {
+          submission_link: link,
+          todayDate : todayDate,
+          id: id
+        }, config);
+        if(response.data.success === true) { 
+            if(response.data.isOkay === true) {
               setIsOkay(true);
             }
-            else {
-              setIsOkay(false);
-            }
-            
-
-
-          }catch(error) {
-            alert('과제 제출 중 오류 발생');
-          }
-         */}
+        }
+        else {
+          alert('과제 제출이 성공적으로 이루어지지 않았습니다')
+          window.location.redirect('/myPage');
+        }
+      }
+      catch(error) {
+        alert('과제 제출 중 오류 발생');
+        console.error('err');
+      }
     }
-
     return (
         <AssignmentContainer>
           {pageOpen === true ? (
@@ -117,7 +113,6 @@ const Assignment = () => {
         </AssignmentContainer>
     );
 }
-
 
 
 export default Assignment;
