@@ -112,16 +112,16 @@ public class MemberController {
 
     //my page 보기(내정보)
     @GetMapping("/users/mypage")
-    public ResponseEntity<Response> viewMypage(HttpServletRequest request, @RequestBody String id) throws JsonProcessingException {
+    public ResponseEntity<Response> viewMypage(HttpServletRequest request) throws JsonProcessingException {
 
         String s = this.headerJWTCheck(request);
+        String authentication = request.getHeader("Authorization");
 
         MemberInfoDTO user_info = null;
         List<Session> attendance_status = new ArrayList<>();
         Member user = null;
 
-        JsonNode jsonNode = objectMapper.readTree(id);
-        id = jsonNode.get("id").asText(); //request body에서 뽑아온 id
+        String id = jwtTokenProvider.getAuthentication(authentication).getName();
 
         if(s.equalsIgnoreCase("admin")||s.equalsIgnoreCase("user")){
             Optional<Member> optionalMember = this.memberRepository.findById(id);
@@ -133,10 +133,21 @@ public class MemberController {
             }
 
             attendance_status = this.memberService.assignment_submitted(user);
-            //과제 리스트 해야함
 
         }
 
         return new ResponseEntity<>(new Response_s_in_l(true, user_info, attendance_status), HttpStatus.OK);
+    }
+    @GetMapping("/users/mypage/assignment")
+    public String viewAssignmentPage(HttpServletRequest request) throws JsonProcessingException {
+        String s = this.headerJWTCheck(request);
+
+        String authentication = request.getHeader("Authorization");
+        String id = jwtTokenProvider.getAuthentication(authentication).getName();
+
+        if(s.equalsIgnoreCase("admin")||s.equalsIgnoreCase("user")){
+
+        }
+        return "mypage-assignment";
     }
 }

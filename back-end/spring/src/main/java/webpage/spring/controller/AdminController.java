@@ -44,7 +44,6 @@ public class AdminController {
 
     private final AdminService adminService;
     private final MemberRepository memberRepository;
-    private final CheckRepository checkRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
     public String headerJWTCheck(HttpServletRequest request) {
@@ -104,6 +103,7 @@ public class AdminController {
         }
         return new ResponseEntity<>(new Response_s_l<Member>(true, allMember), HttpStatus.OK);
     }
+
 
 
     @PostMapping("/admin/members")
