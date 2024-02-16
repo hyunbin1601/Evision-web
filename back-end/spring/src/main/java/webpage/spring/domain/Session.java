@@ -26,6 +26,11 @@ public class Session {
     private MemberAttendance attendance_status;
     private Boolean assignment;
 
+    @JsonIgnore
+    private String regular_session_assignment_link;
+    @JsonIgnore
+    private String weekend_session_assignment_link;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
     private Member member;

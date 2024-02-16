@@ -4,7 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import webpage.spring.DTO.MemberEditDTO;
+import webpage.spring.DTO.MemberAssignmentEditDTO;
+import webpage.spring.DTO.MemberAttendanceEditDTO;
 import webpage.spring.domain.Member;
 import webpage.spring.domain.MemberAttendance;
 import webpage.spring.domain.MemberRole;
@@ -128,10 +129,16 @@ public class AdminService {
         return allAttendance;
     }
 
-    public void editAttendance(MemberEditDTO editAttendance) {
+    public void editAttendance(MemberAttendanceEditDTO editAttendance) {
 
         String id = editAttendance.getId();
-        String todayDate = editAttendance.getTodayDate();
+        String todayDate = editAttendance.getDate();
+
+        System.out.println();
+        System.out.println(editAttendance.getId());
+        System.out.println(editAttendance.getDate());
+        System.out.println(editAttendance.getAttendance_status());
+        System.out.println();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate localDate = LocalDate.parse(todayDate, formatter);
@@ -187,6 +194,35 @@ public class AdminService {
         this.memberRepository.save(member);
     }
 
+    public void editAssignment(MemberAssignmentEditDTO editAssignment) {
+
+        String id = editAssignment.getId();
+        String todayDate = editAssignment.getDate();
+        System.out.println(id+ todayDate);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate localDate = LocalDate.parse(todayDate, formatter);
+
+        Session session = null;
+
+        if (checkRepository.existsByMemberIdAndTodayDate(id, localDate)) {
+            // 특정 id, 특정 날짜에 대한 데이터가 존재할 때
+            session = checkRepository.findAllByIdAndTodayDate(id, localDate);
+            System.out.println("id: " + session.getId());
+            session.setTodayDate(localDate);
+            session.setAssignment(Boolean.valueOf((editAssignment.getAssignment_status())));
+            DayOfWeek dayOfWeek = localDate.getDayOfWeek();
+            if (dayOfWeek.getValue() == 4) {
+                session.setSession_type("thu");
+            } else if (dayOfWeek.getValue() == 6) {
+                session.setSession_type("sat");
+            } else {
+                return;
+            }
+        }else{
+            System.out.println("nonono");
+        }
+        this.checkRepository.save(session);
+    }
 
 
 }
