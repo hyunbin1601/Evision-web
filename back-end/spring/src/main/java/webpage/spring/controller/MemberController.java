@@ -131,15 +131,29 @@ public class MemberController {
         return new ResponseEntity<>(new Response_mypage(true, user_info, user_status), HttpStatus.OK);
     }
     @GetMapping("/users/mypage/assignment")
-    public String viewAssignmentPage(HttpServletRequest request) throws JsonProcessingException {
+    public ResponseEntity<Response> viewAssignmentPage(HttpServletRequest request) throws JsonProcessingException {
         String s = this.headerJWTCheck(request);
 
         String authentication = request.getHeader("Authorization");
         String jwt_id = jwtTokenProvider.getAuthentication(authentication).getName();
 
+        MemberInfoDTO user_info = null;
+        List<Session> user_status = new ArrayList<>();
+        Member user = null;
+
+
         if(s.equalsIgnoreCase("admin")||s.equalsIgnoreCase("user")){
+            Optional<Member> optionalMember = this.memberRepository.findById(jwt_id);
+            if(optionalMember.isPresent()){
+                user = this.memberRepository.findById(jwt_id).get();
+                user_info= this.memberService.get_user_info(user);
+            }else{
+                System.out.println("no member with such id");
+            }
+
+            user_status = this.memberService.assignment_submitted(user);
 
         }
-        return "mypage-assignment";
+        return new ResponseEntity<>(new Response_mypage(true, user_info, user_status), HttpStatus.OK);
     }
 }
