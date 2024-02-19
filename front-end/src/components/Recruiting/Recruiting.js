@@ -28,7 +28,7 @@ function Recruiting() {
           <p className="recruting3">추후 작성</p>
         </div>
         <div className="button-section">
-          <a href='https://www.naver.com' target="_blank" rel="noopener noreferrer">
+          <a href='https://forms.gle/cjsxW5rKqaiU5g336' target="_blank" rel="noopener noreferrer">
             <button className="apply-button">지원하기</button>
           </a>
         </div>
