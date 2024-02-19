@@ -1,1 +1,1 @@
-삭제하기
+//delete MemberAttendanceController.java
