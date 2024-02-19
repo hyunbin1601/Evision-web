@@ -96,43 +96,6 @@ public class SecurityConfig {
     }
 
 
-    //    @Bean
-//    SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-//        http
-//                .authorizeHttpRequests((authorizeHttpRequests)-> authorizeHttpRequests
-//                        .requestMatchers(new AntPathRequestMatcher("/**")).permitAll())
-//                .csrf((csrf)->csrf
-//                        .ignoringRequestMatchers(new AntPathRequestMatcher
-//                                ("/**")))
-//                .headers((headers)->headers
-//                        .addHeaderWriter(new XFrameOptionsHeaderWriter(
-//                                XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN)))
-//                .formLogin((formLogin)->formLogin
-//                        .loginPage("/login")
-//                        .defaultSuccessUrl("/"))
-//                .logout((logout) -> logout
-//                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-//                        .logoutSuccessUrl("/")
-//                        .invalidateHttpSession(true));
-//        return http.build();
-//    }
-
-
-
-    //    @Bean
-//    public UserDetailsService userDetailsService(BCryptPasswordEncoder bCryptPasswordEncoder) {
-//        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-//        manager.createUser(User.withUsername("user")
-//                .password(bCryptPasswordEncoder.encode("userPass"))
-//                .roles("USER")
-//                .build());
-//        manager.createUser(User.withUsername("admin")
-//                .password(bCryptPasswordEncoder.encode("adminPass"))
-//                .roles("USER", "ADMIN")
-//                .build());
-//        return manager;
-//    }
-
 
 
 }
