@@ -5,27 +5,20 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import webpage.spring.DTO.AttendanceReponseDTO;
-import webpage.spring.DTO.AttendanceRequestDTO;
-import webpage.spring.DTO.MemberEditDTO;
+import webpage.spring.DTO.*;
 import webpage.spring.domain.MemberAttendance;
 import webpage.spring.domain.Session;
 import webpage.spring.jwt.JwtTokenProvider;
 import webpage.spring.repository.CheckRepository;
 import webpage.spring.repository.MemberRepository;
-import webpage.spring.response.Response;
+import webpage.spring.response.*;
 import webpage.spring.domain.Member;
 import webpage.spring.domain.MemberCreateForm;
-import webpage.spring.response.Response_attendance;
-import webpage.spring.response.Response_s_l;
-import webpage.spring.response.Response_s_m;
 import webpage.spring.service.AdminService;
 
 import java.time.LocalDate;
@@ -51,6 +44,7 @@ public class AdminController {
         String authentication = request.getHeader("Authorization");
 
         boolean success = jwtTokenProvider.validateToken(authentication);
+
         if(success){
             Authentication auth = jwtTokenProvider.getAuthentication(authentication);
 
@@ -89,7 +83,11 @@ public class AdminController {
 
         String message = "";
         List<Member> allMember = null;
-        
+
+        if(!roleIsAdmin(request)){
+            return new ResponseEntity<>(new Response_s_m(false, "you are not an admin."), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
         if(roleIsAdmin(request)){
             try{
                 allMember= adminService.retrieveAllUser(); //모든 멤버 retrieve
@@ -176,7 +174,6 @@ public class AdminController {
 
 
     //출석 체크 멤버들 보기
-//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/admin/attendance")
     public ResponseEntity<Response> showAllAttendance(HttpServletRequest request){
 
@@ -204,7 +201,6 @@ public class AdminController {
         return new ResponseEntity<>(new Response_attendance(true, attendanceReponseDTOList), HttpStatus.OK);
     }
 
-//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/admin/attendance/thu")
     public ResponseEntity<Response_s_m> saveAttendanceThu(HttpServletRequest request, @RequestBody List<AttendanceRequestDTO> attendanceRequests){
 
@@ -235,7 +231,7 @@ public class AdminController {
         }
         return new ResponseEntity<>(new Response_s_m(true, message), HttpStatus.OK);
     }
-//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+
     @PostMapping("/admin/attendance/sat")
     public ResponseEntity<Response_s_m> saveAttendanceSat(HttpServletRequest request, @RequestBody List<AttendanceRequestDTO> attendanceRequests){
 
@@ -268,7 +264,7 @@ public class AdminController {
     }
 
     @PatchMapping("/admin/attendance")
-    public ResponseEntity<Response> editAttendance(HttpServletRequest request, @RequestBody List<MemberEditDTO> editAttendances){
+    public ResponseEntity<Response> editAttendance(HttpServletRequest request, @RequestBody List<MemberAttendanceEditDTO> editAttendances){
 
         if(!roleIsAdmin(request)){
             return new ResponseEntity<>(new Response_s_m(false, "you are not an admin."), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -276,7 +272,7 @@ public class AdminController {
 
         String message = "";
         try{
-            for (MemberEditDTO editAttendance:editAttendances){
+            for (MemberAttendanceEditDTO editAttendance:editAttendances){
                 this.adminService.editAttendance(editAttendance);
             }
             message = "출결 수정 완료";
@@ -287,4 +283,65 @@ public class AdminController {
         return new ResponseEntity<>(new Response_s_m(true, message), HttpStatus.OK);
     }
     //과제 체크
+
+
+    @GetMapping("/admin/assignment")
+    public ResponseEntity<Response> showAllAssignment(HttpServletRequest request){
+
+        if(!roleIsAdmin(request)){
+            return new ResponseEntity<>(new Response_s_m(false, "you are not an admin."), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        List<AssignmentResponseDTO> assignmentResponseDTOList = new ArrayList<>();;
+        String message = "";
+        List<Session> allAssignment ;
+        try{
+            allAssignment= adminService.retrieveAllAttendance();
+            for (Session assignment: allAssignment){
+                LocalDate localDate = assignment.getTodayDate();
+                String formattedDate = localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                String assignment_status = String.valueOf(assignment.getAssignment());
+
+                if(assignment_status.equalsIgnoreCase(null)){
+                    //아직 입력이 true/false 안되어 있으면 (즉, null이면) false로 지정해서 출력
+                    assignment_status = "false";
+                }
+
+                System.out.println(assignment.getId());
+                System.out.println(assignment.getMember().getName());
+                System.out.println(assignment.getSession_type());
+                System.out.println(assignment_status);
+                System.out.println(formattedDate);
+
+                AssignmentResponseDTO assignmentDTO = new AssignmentResponseDTO(assignment.getId(), assignment.getMember().getName(),assignment.getSession_type(), Boolean.valueOf(assignment_status), formattedDate);
+                assignmentResponseDTOList.add(assignmentDTO);
+            }
+        }
+        catch (Exception e){
+            message = e.getMessage();
+            return new ResponseEntity<>(new Response_s_m(false, message), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(new Response_assignment(true, assignmentResponseDTOList), HttpStatus.OK);
+    }
+
+    @PatchMapping("/admin/assignment")
+    public ResponseEntity<Response> editAssignment(HttpServletRequest request, @RequestBody List<MemberAssignmentEditDTO> editAssignments){
+
+        if(!roleIsAdmin(request)){
+            return new ResponseEntity<>(new Response_s_m(false, "you are not an admin."), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        String message = "";
+        try{
+            for (MemberAssignmentEditDTO editAssignment:editAssignments){
+                this.adminService.editAssignment(editAssignment);
+            }
+            message = "과제 제출 수정 완료";
+        }catch (Exception e){
+            message = e.getMessage();
+            return new ResponseEntity<>(new Response_s_m(false, message), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(new Response_s_m(true, message), HttpStatus.OK);
+    }
+
 }

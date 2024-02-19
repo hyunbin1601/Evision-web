@@ -7,12 +7,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class AttendanceReponseDTO {
-
+public class AssignmentResponseDTO {
     private String id;
     private String name;
     private String session_type;
-    private String attendance_status;
+    private boolean assignment_status;
     private String todayDate;
 
 }
