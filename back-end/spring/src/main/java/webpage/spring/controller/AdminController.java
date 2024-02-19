@@ -80,7 +80,6 @@ public class AdminController {
     //관리자의 멤버에 관한 서비스 (회원가입, 회원수정, 회원삭제, 회원보기)
     @GetMapping("/admin/members")
     public ResponseEntity<Response> showAllMembers(HttpServletRequest request){
-
         String message = "";
         List<Member> allMember = null;
 
@@ -91,6 +90,9 @@ public class AdminController {
         if(roleIsAdmin(request)){
             try{
                 allMember= adminService.retrieveAllUser(); //모든 멤버 retrieve
+                for(Member member:allMember){
+                    this.adminService.setFine(member.getId());
+                }
             }
             catch (Exception e){
                 message = "회원 조회 중 오류 발생";

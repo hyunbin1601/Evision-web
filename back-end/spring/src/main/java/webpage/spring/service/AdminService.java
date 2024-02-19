@@ -190,7 +190,7 @@ public class AdminService {
         absence += lateToAbsence;
         //과제 미제출도 연결해야대어요
         member.setFine(absence*2000);
-        member.setTotal_settlement(member.getTotal_settlement() - member.getFine());
+        member.setTotal_settlement(30000 - member.getFine());
         this.memberRepository.save(member);
     }
 
