@@ -26,10 +26,7 @@ public class Session {
     private MemberAttendance attendance_status;
     private Boolean assignment;
 
-    @JsonIgnore
-    private String regular_session_assignment_link;
-    @JsonIgnore
-    private String weekend_session_assignment_link;
+    private String assignmentLink;//류정윤 작업: 과제 제출 링크
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnore
