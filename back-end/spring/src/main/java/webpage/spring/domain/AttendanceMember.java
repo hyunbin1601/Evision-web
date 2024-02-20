@@ -1,0 +1,1 @@
+//delete Attendance Member class

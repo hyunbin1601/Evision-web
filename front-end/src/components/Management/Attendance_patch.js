@@ -1,19 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useTable } from 'react-table';
 import styled from 'styled-components';
+import Leftbar from '../Leftbar_admin';
 
-const TableContainer = styled.div`
-    font-family: 'Arial', sans-serif;
+const Wrapper = styled.div`
+    max-width: 800px;
+    margin: 0 auto;
+`;
+
+const H1 = styled.p`
+    font-size: 2.3em;
+    color: white;
+    font-weight: bold;
+    top: 120px;
+    left: 200px;
+    text-align: center;
+    position: relative;
+    width: 400px;
+`;
+
+const TableContainer = styled.table`
     border-collapse: collapse;
-    width: 800px;
-    margin: 20px auto;
+    max-width: 600px;
+    margin-bottom: 20px;
+    top: 150px;
+    left: 100px;
+    position: relative;
 `;
 
 const TableHead = styled.th`
-    background-color: #f2f2f2;
+    background-color: #1a5d1a;
     padding: 12px;
-    text-align: left;
+    text-align: center;
+    color: white;
+    border: 1px solid #dddddd;
 `;
 
 const TableRow = styled.tr`
@@ -27,11 +47,6 @@ const TableCell = styled.td`
     text-align: center;
 `;
 
-const CheckboxInput = styled.input`
-    width: 20px;
-    height: 20px;
-`;
-
 const Button = styled.button`
     background-color: #4caf50;
     color: white;
@@ -39,117 +54,144 @@ const Button = styled.button`
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-top: 10px;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+    margin-right: 10px;
+    top: 600px;
+    position: relative;
 `;
 
-const AttendanceTable = () => {
+const AttendancePatch = () => {
+    const [attendanceList, setAttendanceList] = useState([]);
     const [names, setNames] = useState([]);
-    const [attendanceData, setAttendanceData] = useState([]);
     const [dateHeaders, setDateHeaders] = useState([]);
+    const selectedList = [
+        { value: "ABSENCE", name: "ABSENCE" },
+        { value: "ATTEND", name: "ATTEND" },
+        { value: "LATE", name: "LATE" }
+    ];
+    const token = localStorage.getItem('token');
+    const config = { headers: { "Authorization" : `Bearer ${token}` } }
+    const changeDate = (todayDate) => {
+        const date = new Date(todayDate);
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        return `${month}/${day}`;
+    };
 
     useEffect(() => {
-        axios.get('/api/attendance')
+        axios.get('/admin/attendance', config)
             .then(response => {
-                const { attendanceData, dateHeaders } = extractData(response.data);
-                setAttendanceData(attendanceData);
-                setDateHeaders(dateHeaders);
+                if(response.data.success === true) {
+                    const filteredList = response.data.member_attendance.filter(item => item.session_type === 'thr');
+                    setAttendanceList(filteredList);
+                    const { names, dateHeaders } = extractData(filteredList);
+                    const changeDateHeaders = dateHeaders.map(changeDate);
+                    setNames(names);
+                    setDateHeaders(changeDateHeaders);
+                }
+                else {
+                    alert("권한이 없습니다");
+                    window.location.reload('/');
+                }
             })
-            .catch(error => console.error(error));
-
-        axios.get('/api/names')
-            .then(response => setNames(response.data))
             .catch(error => console.error(error));
     }, []);
 
     const extractData = (rawData) => {
         const extractedData = {
-            attendanceData: [],
+            names: [],
             dateHeaders: [],
         };
 
+
+        rawData.forEach(data => {
+            if(!names.includes(data.name)) {
+                names.push(data.name)
+            }
+            if(!dateHeaders.includes(data.todayDate)) {
+                dateHeaders.push(data.todayDate)
+            }
+        });
 
         extractedData.dateHeaders.sort((a, b) => new Date(a) - new Date(b));
 
         return extractedData;
     };
 
-    const handleCheckboxChange = (student_id, date) => {
-        const updatedData = attendanceData.map(data => {
-            const newData = { ...data };
-            newData[date] = !newData[date];
-            return newData;
-        });
-        setAttendanceData(updatedData);
+    const handleCellChange = (id, todayDate, newStatus) => {
+        setAttendanceList(prevList =>
+            prevList.map(data =>
+                data.id === id && data.todayDate === todayDate
+                    ? { ...data, attendance_status: newStatus }
+                    : data
+            )
+        );
     };
 
-    const handleSave = () => {
-        const payload = attendanceData.map(({ name, student_id, ...attendanceChecks }) => ({
-            name,
-            student_id,
-            attendanceChecks,
+    const handleSaveChanges = () => {
+        const modifiedData = attendanceList.map(({ id, todayDate, attendance_status }) => ({
+            id: id,
+            todayDate: todayDate,
+            attendance_status: attendance_status
         }));
 
-        axios.patch('/attendance/update', payload)
-            .then(response => console.log(response.data))
+        axios.patch('/admin/attendance', modifiedData, config)
+            .then(response => {
+                if(response.data.success === true) {
+                    console.log(response)
+                    window.location.reload();
+                }
+                else {
+                    alert("출석 수정에 실패하였습니다.");
+                }
+            })
             .catch(error => console.error(error));
     };
 
-    const columns = React.useMemo(
-        () => [
-            {
-                Header: '이름',
-                accessor: 'name',
-            },
-            ...dateHeaders.map(date => ({
-                Header: date,
-                accessor: date,
-                Cell: ({ row }) => (
-                    <TableCell>
-                        <CheckboxInput
-                            type="checkbox"
-                            checked={row.original[date] || false}
-                            onChange={() => handleCheckboxChange(row.original.student_id, date)}
-                        />
-                    </TableCell>
-                ),
-            })),
-        ],
-        [dateHeaders]
-    );
-
-    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
-        columns,
-        data: attendanceData,
-    });
-
     return (
-        <div>
-            <TableContainer {...getTableProps()}>
+        <Wrapper>
+        <Leftbar />
+            <H1>정규세션 출석 리스트</H1>
+            <TableContainer>
                 <thead>
-                    {headerGroups.map(headerGroup => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                            {headerGroup.headers.map(column => (
-                                <TableHead {...column.getHeaderProps()}>{column.render('Header')}</TableHead>
-                            ))}
-                        </tr>
-                    ))}
+                    <tr>
+                        <TableHead>이름</TableHead>
+                        {dateHeaders.map((date) => (
+                            <TableHead>{date}</TableHead>
+                        ))}
+                    </tr>
                 </thead>
-                <tbody {...getTableBodyProps()}>
-                    {rows.map(row => {
-                        prepareRow(row);
-                        return (
-                            <TableRow {...row.getRowProps()}>
-                                {row.cells.map(cell => (
-                                    <TableCell {...cell.getCellProps()}>{cell.render('Cell')}</TableCell>
-                                ))}
-                            </TableRow>
-                        );
-                    })}
+                <tbody>
+                {attendanceList.map((item) => (
+                        <TableRow key={item.id}>
+                            <TableCell key={item.name}>{item.name}</TableCell>
+                            {dateHeaders.map((date) => (
+                                <TableCell key={date}>
+                                    {attendanceList.filter(data => data.id === item.id && data.todayDate === date).map((data) => (
+                                        <select
+                                            value={data.attendance_status}
+                                            onChange={(e) => handleCellChange(data.id, data.todayDate, e.target.value)}
+                                        >
+                                            {selectedList.map(option => (
+                                                <option key={option.value} value={option.value}>{option.name}</option>
+                                            ))}
+                                        </select>
+                                    ))}
+                                </TableCell>
+                            ))}
+                        </TableRow>
+                    ))}
                 </tbody>
             </TableContainer>
-            <Button onClick={handleSave}>Save</Button>
-        </div>
+            <Button onClick={handleSaveChanges}>Save</Button>
+        </Wrapper>
     );
 };
 
-export default AttendanceTable;
+export default AttendancePatch;

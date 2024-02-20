@@ -1,54 +1,172 @@
-import React, {useState} from 'react';
-import Table from './Table';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
+import Leftbar from '../Leftbar_admin';
 
-const Styledp1 = styled.p1`
+const Wrapper = styled.div`
+    max-width: 800px;
+    margin: 0 auto;
+`;
+
+const H1 = styled.p`
     font-size: 2.3em;
     color: white;
     font-weight: bold;
-    top: 220px;
-    left: 550px;
-    text-align: left;
+    top: 120px;
+    left: 200px;
+    text-align: center;
     position: relative;
-    width: 300px;
+    width: 400px;
 `;
-const StyledButton = styled.button`
-    top: 660px;
+
+const TableContainer = styled.table`
+    border-collapse: collapse;
+    width: 400px;
+    margin-bottom: 20px;
+    top: 150px;
     left: 200px;
     position: relative;
+`;
+
+const TableHead = styled.th`
     background-color: #1a5d1a;
-    color: #fff;
-    padding: 10px 15px;
-    margin-top: 20px;
-    cursor: pointer;
+    padding: 12px;
+    text-align: center;
+    color: white;
+    border: 1px solid #dddddd;
+`;
+
+const TableRow = styled.tr`
+    &:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+`;
+
+const TableCell = styled.td`
+    padding: 12px;
+    border: 1px solid #e6e6e6;
 `;
 
 
-const Attendance = () => {
-    const [checkedCells, setCheckedCells] = useState([]);  //chekedCells는 서버로 보낼 체크박스 키값의 배열
 
-    const handleCheckboxChange = (key) => {  //prevCheckedCells <- 이전에 체크한 체크박스 배열 저장
-        setCheckedCells((prevCheckedCells) =>
-            prevCheckedCells.includes(key)   //key는 셀에 넣은 구분키
-                ? prevCheckedCells.filter((cellKey) => cellKey !== key)
-                : [...prevCheckedCells, key]
-        );
+const Button = styled.button`
+    background-color: #4caf50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+    margin-right: 10px;
+    top: 600px;
+    position: relative;
+`;
+
+const Attendance_Run = () => {
+    const [names, setNames] = useState([]);
+    const [attendanceData, setAttendanceData] = useState([]);
+    const [selected, setSelected] = useState("ABSENCE");
+    const selectedList = [
+        { value: "ABSENCE", name: "ABSENCE" },
+        { value: "ATTEND", name: "ATTEND" },
+    ];
+    const todayDate = new Date().toISOString().split('T')[0];
+    const token = localStorage.getItem('token');
+    const config = { headers: { "Authorization" : `Bearer ${token}` } };
+
+    useEffect(() => {
+        axios.get('/admin/members', config)  
+            .then(response => {
+                if(response.data.success === true) {
+                    setNames(response.data.user)
+                }
+                else {
+                    alert("권한이 없습니다");
+                    window.location.reload('/');
+                }
+            })
+            .catch(error => console.error(error));
+
+        initializeAttendanceData();
+    }, []);
+
+    const initializeAttendanceData = () => {
+        const initialData = names.map(({ name, id }) => ({
+            name: name,
+            student_id: id,
+            attendance_status: "ABSENCE",
+            todayDate: todayDate
+        }));
+        setAttendanceData(initialData);
     };
 
-    const handleSaveClick = () => {
-        //서버와의 통신을 위한 용도임
-    };
+    const onHandleSelect = (e, student_id) => {
+        setAttendanceData(prevData => 
+            prevData.map(item => 
+                item.student_id === student_id ? {...item, attendance_status : e.target.value} : item
+                )
+            )
+    }
 
-    const names = [{ name: '이면빈' }];   //json 형태로 보내기 때문에 -> {} 사용!
-    const days = ['날짜1', '날짜2', '날짜3'];
+    const handleSave = () => {
+        const saveData = attendanceData.map(({ student_id, attendance_status, todayDate }) => ({
+            id: student_id,
+            attendance_status: attendance_status,
+            todayDate: todayDate
+        }));
+
+        axios.post('/admin/attendance/sat', saveData, config)
+            .then(response => {
+                if(response.data.success === true) {
+                    console.log(response.data)
+                    window.location.reload();
+                }
+                else {
+                    console.error('err')
+                }
+            })
+            .catch(error => console.error(error));
+    };
 
     return (
-        <div>
-            <Styledp1>러닝세션 출석체크</Styledp1>
-            <Table names={names} days={days} onCheckboxChange={handleCheckboxChange}/>
-            <StyledButton onClick={handleSaveClick}>Save</StyledButton>
-        </div>
+        <Wrapper>
+        <Leftbar />
+            <H1>러닝세션 출석체크</H1>
+            <TableContainer>
+                <thead>
+                    <tr>
+                        <TableHead>이름</TableHead>
+                        <TableHead>{todayDate}</TableHead>
+                    </tr>
+                </thead>
+                <tbody>
+                    {attendanceData.map(({ name, student_id }) => (
+                        <TableRow key={student_id}>
+                            <TableCell>{name}</TableCell>
+                            <TableCell>
+                            <select onChange={(e) => onHandleSelect(e, student_id)} value={student_id}>
+                                {selectedList.map((item) => {
+                                    return <option value={item.value} key={item.value}>
+                                        {item.name}
+                                    </option>;
+                                })}
+                            </select>
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </tbody>
+            </TableContainer>
+            <div>
+                <Button onClick={handleSave}>Save</Button>
+            </div>
+        </Wrapper>
     );
 };
 
-export default Attendance;
+export default Attendance_Run;

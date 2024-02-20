@@ -15,6 +15,23 @@ import UserInfo from "./components/MyPage/UserInfo";
 import Attendance from "./components/Management/Attendance"
 import Login from "./components/Login/Login"
 import UsersList from "./components/Management/UsersList"
+import AttendancePatch from "./components/Management/Attendance_patch";
+import AttendancePatchRun from "./components/Management/Attendance_patch_Sa"
+import AssignmentCheckSu from "./components/Management/AssignmentCheck-Sa";
+import AssignmentCheck from "./components/Management/AssignmentCheck-Th"
+import Register from "./components/Management/Register"
+import AttendanceRun from "./components/Management/Attendance_Run"
+import PrivateRoute from "./components/Route/privateRoute";
+import Recruiting from "./components/Recruiting/Recruiting"
+import Home from "./components/Home/Home"
+import AttendanceStatus from "./components/MyPage/AttendanceStatus";
+import Assignment from "./components/MyPage/Assignment";
+import Assignment_run from "./components/MyPage/Assignment_run"
+import AttendanceStatus from "./components/MyPage/AttendanceStatus";
+import Assignment from "./components/MyPage/Assignment";
+
+
+
 
 function App() {
   const [load, upadateLoad] = useState(true);
@@ -34,11 +51,24 @@ function App() {
         <Navbar />
         <ScrollToTop />
         <Routes>
-          <Route path="/MyPage" element={<UserInfo />} />
-          <Route path="/Management/Attendance" element={<Attendance />} />
-          <Route path="/Management/UsersList" element={<UsersList />} />
+          <Route path="/" element={<Home />} />
           <Route path="/Login" element={<Login />} />
           <Route path="*" element={<Navigate to="/"/>} />
+          <Route path="/MyPage" element={<UserInfo />} />
+          <Route path="/Management/Attendance" element={<Attendance />} />
+          <Route path="/Management/Attendance_Run" element={<AttendanceRun />} />
+          <Route path="/Management/UsersList" element={<UsersList />} />
+          <Route path="/Management/AttendancePatch" element={<AttendancePatch/>} />
+          <Route path="/Management/AttendancePatch_Run" element={<AttendancePatchRun/>} />
+          <Route path="/Management/AssignmentCheck_Run" element={<AssignmentCheckSu />} />
+          <Route path="/Management/AssignmentCheck" element={<AssignmentCheck />} />
+          <Route path="/Management/Register" element={<Register />} />
+          <Route path="/Recruiting" element={<Recruiting />} />
+          <Route path='/Mypage/AttendanceStatus' element={<AttendanceStatus />} />
+          <Route path='/Mypage/Assignment' element={<Assignment />} />
+          <Route path='/Mypage/Assignment_run' element={<Assignment_run />} />
+          <Route path='/Mypage/AttendanceStatus' element={<AttendanceStatus />} />
+          <Route path='/Mypage/Assignment' element={<Assignment />} />
         </Routes>
       </div>
     </Router>

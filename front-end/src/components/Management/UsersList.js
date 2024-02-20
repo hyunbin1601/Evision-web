@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import InfoList from './InfoList';
 import styled from 'styled-components';
+import axios from 'axios';
+import Leftbar from '../Leftbar_admin';
 
 const Wrapper = styled.div`
     max-width: 800px;
@@ -11,8 +13,8 @@ const H1 = styled.p`
     font-size: 2.3em;
     color: white;
     font-weight: bold;
-    top: 220px;
-    left: 550px;
+    top: 120px;
+    left: 260px;
     text-align: left;
     position: relative;
     width: 300px;
@@ -21,37 +23,36 @@ const H1 = styled.p`
 
 
 const UsersList = () => {
-    const dummyData = [
-        {
-            name: '이면빈',
-            studentId: '2176317',
-            email: 'vina1601@ewhain.net',
-            year: 'ob',
-            fine: 3000,
-            price: 27000,
-        },
-        {
-            name: '류정윤',
-            studentId: '몰라',
-            email: 'stellano@ewhain.net',
-            year: 'ob',
-            fine: 3000,
-            price: 27000,
-        }
-    ];
+    const [userInfos, setUserInfos] = useState([]);
+    const token = localStorage.getItem('token');
+    const config = { headers: { "Authorization" : `Bearer ${token}` } };
 
-    const handleSave = (editedValues) => {
-    //axios로 함수 작성, 서버 만들어지는 대로 ㄱㄱ
+    useEffect(() => {
+        axios.get("/admin/members", config)
+            .then(response => {
+                if(response.data.success === true) {
+                    setUserInfos(response.data.user);
+                }
+                else {
+                    alert("접근 권한이 없습니다.");
+                    window.location.redirect('/');
+                }
+            })
+            .catch(err => console.log(err))
+    }, [])
+
+    const handleSave = (updatedUserInfos) => {
+        setUserInfos(updatedUserInfos);   
     };
 
-    const onCheckboxChange = () => {
 
-    }
+
 
     return (
         <Wrapper>
+        <Leftbar />
             <H1>회원 정보 목록</H1>
-            <InfoList userInfos={dummyData} handleSave={handleSave} />
+            <InfoList userInfos={userInfos} handleSave={handleSave}/>
         </Wrapper>
     );
 };
