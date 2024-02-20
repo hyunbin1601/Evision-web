@@ -18,6 +18,7 @@ import {
   SiPostgresql,
 } from "react-icons/si";
 import { TbBrandGolang } from "react-icons/tb";
+import './About.css';
 
 function Techstack() {
   return (

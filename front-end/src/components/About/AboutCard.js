@@ -1,15 +1,14 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
 import { ImPointRight } from "react-icons/im";
+import './About.css';
 
 function AboutCard() {
   return (
     <Card className="quote-card-view">
       <Card.Body>
-        <blockquote className="blockquote mb-0">
-          <p style={{ textAlign: "justify" }}>
-            EVI$ION은 엘텍공과대학 사이버보안 전공 소속의 유일한 <span className="purple">과동아리</span>
-            이자 <span className="purple"> 해킹 동아리</span>입니다.
+          <p className="card-body">
+            EVI$ION은 엘텍공과대학 사이버보안 전공 소속의 유일한 과동아리이자 해킹 동아리입니다.
             <br />
             6.5기수째 사이버보안 벗들을 중심으로 offensive security 중점의 학술적인 발전을 도모하고 있습니다.
             <br />
@@ -30,11 +29,7 @@ function AboutCard() {
             </li>
           </ul>
 
-          <p style={{ color: "#a1bf9f" }}>
-            "Strive to build things that make a difference!"{" "}
-          </p>
-          <footer className="blockquote-footer">Soumyajit</footer>
-        </blockquote>
+        
       </Card.Body>
     </Card>
   );

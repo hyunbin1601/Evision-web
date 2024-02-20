@@ -8,6 +8,9 @@ import {
   AiFillInstagram,
 } from "react-icons/ai";
 import { FaLinkedinIn } from "react-icons/fa";
+import './Home.css';
+import { SiKakaotalk } from "react-icons/si";
+
 
 function Home2() {
   return (
@@ -16,41 +19,25 @@ function Home2() {
         <Row>
           <Col md={8} className="home-about-description">
             <h1 style={{ fontSize: "2.6em" }}>
-              LET ME INTRODUCE <span className="purple">EVI$ION</span>
+              LET ME INTRODUCE <span style={{fontWeight:"bold"}}>EVI$ION</span>
             </h1>
-            <p className="home-about-body">
+            <h2 className="home-about-body">
               엘텍공과대학 사이버보안전공 소속의 유일한 과동아리이자 해킹 동아리입니다. 
               <br />
               <br />사이버보안 벗들을 중심으로
-              <i>
-                <b className="purple"> offensive security </b>
-              </i> 중점의 학술적인 발전을 도모하고 있습니다.
+              <i> offensive security</i> 중점의 학술적인 발전을 도모하고 있습니다.
               <br />
               <br />
-              about 페이지가 따로 있는데 여기엔 뭘 더 써야하지? &nbsp;
-              <i>
-                <b className="purple">활동으로 얻을 수 있는 것 </b> 이것도
-                about페이지에 들어가는 거 아닌가?{" "}
-                <b className="purple">
-                  물어봐야지.
-                </b>
-              </i>
+              새로운 기수 벗들과 함께하는 만큼 더욱 알차고 심도 있는 활동을 위해 양질의 프로그램을 기획하였습니다. &nbsp;
               <br />
               <br />
-              그리고 또 물어볼 것. <b className="purple">className="purple"</b> 이거
-              정의해놓은 곳이 어디있는 건지 못찾겠다. 초반에 뭐 바꾸다가 나중에 보니까 purple에 해당하는 곳들도
-              다 하얀색 됐는데..그리구
-              <i>
-                <b className="purple">
-                  {" "}
-                  밑에 아이콘들.
-                </b>
-              </i>
-              &nbsp; 각각
-              <i>
-                <b className="purple"> 회장,부회장,운영진,운영진?</b>
-              </i>
-            </p>
+              EVI$ION은 6.5기 여러분을 기다리고 있습니다!
+              <br /> 
+              많은 관심과 지원 바랍니다.
+              <br />
+              ☆*:.｡. o(≧▽≦)o .｡.:*☆
+              &nbsp; 
+            </h2>
           </Col>
           <Col md={4} className="myAvtar">
             <Tilt>
@@ -59,11 +46,11 @@ function Home2() {
           </Col>
         </Row>
         <Row>
-          <Col md={12} className="home-about-social">
+          <Col className="home-about-social">
             <h1>FIND ME ON</h1>
-            <p>
-              Feel free to <span className="purple">connect </span>with me
-            </p>
+            <a href="https://open.kakao.com/o/sBPXsrCf">
+            <SiKakaotalk size={50} />
+            </a>
           </Col>
         </Row>
       </Container>

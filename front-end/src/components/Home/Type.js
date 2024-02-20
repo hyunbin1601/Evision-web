@@ -1,5 +1,6 @@
 import React from "react";
 import Typewriter from "typewriter-effect";
+import './Home.css';
 
 function Type() {
   return (
@@ -10,6 +11,7 @@ function Type() {
           "Pwnable",
           "Reversing",
           "Forensic",
+          "Crypto"
         ],
         autoStart: true,
         loop: true,

@@ -7,6 +7,7 @@ import {
   SiVercel,
   SiMacos,
 } from "react-icons/si";
+import './About.css';
 
 function Toolstack() {
   return (
