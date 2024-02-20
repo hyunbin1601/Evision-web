@@ -13,19 +13,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import webpage.spring.DTO.IsOkayDto;
 import webpage.spring.DTO.LoginDTO;
+import webpage.spring.DTO.MemberEditAssignmentDto;
 import webpage.spring.domain.Session;
-import webpage.spring.response.Response;
+import webpage.spring.response.*;
 import webpage.spring.DTO.MemberInfoDTO;
 import webpage.spring.domain.Member;
 import webpage.spring.jwt.JwtToken;
 import webpage.spring.jwt.JwtTokenProvider;
-import webpage.spring.response.Response_login;
-import webpage.spring.response.Response_mypage;
 import webpage.spring.service.MemberService;
 import webpage.spring.repository.MemberRepository;
-
-
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -130,30 +128,79 @@ public class MemberController {
 
         return new ResponseEntity<>(new Response_mypage(true, user_info, user_status), HttpStatus.OK);
     }
-    @GetMapping("/users/mypage/assignment")
-    public ResponseEntity<Response> viewAssignmentPage(HttpServletRequest request) throws JsonProcessingException {
-        String s = this.headerJWTCheck(request);
+//    @GetMapping("/users/mypage/assignment")
+//    public ResponseEntity<Response> viewAssignmentPage(HttpServletRequest request) throws JsonProcessingException {
+//        String s = this.headerJWTCheck(request);
+//
+//        String authentication = request.getHeader("Authorization");
+//        String jwt_id = jwtTokenProvider.getAuthentication(authentication).getName();
+//
+//        MemberInfoDTO user_info = null;
+//        List<Session> user_status = new ArrayList<>();
+//        Member user = null;
+//
+//
+//        if(s.equalsIgnoreCase("admin")||s.equalsIgnoreCase("user")){
+//            Optional<Member> optionalMember = this.memberRepository.findById(jwt_id);
+//            if(optionalMember.isPresent()){
+//                user = this.memberRepository.findById(jwt_id).get();
+//                user_info= this.memberService.get_user_info(user);
+//            }else{
+//                System.out.println("no member with such id");
+//            }
+//
+//            user_status = this.memberService.assignment_submitted(user);
+//
+//        }
+//        return new ResponseEntity<>(new Response_mypage(true, user_info, user_status), HttpStatus.OK);
+//    }
 
+    //과제 체크
+    @GetMapping("/users/mypage/assignment")
+    public ResponseEntity<Response> openPage(HttpServletRequest request) throws JsonProcessingException {
+        String message = "";
+
+        String s = this.headerJWTCheck(request);
         String authentication = request.getHeader("Authorization");
         String jwt_id = jwtTokenProvider.getAuthentication(authentication).getName();
+        boolean pageOpen=false;
+        List<IsOkayDto> isOkayList = null;
 
-        MemberInfoDTO user_info = null;
-        List<Session> user_status = new ArrayList<>();
-        Member user = null;
-
-
-        if(s.equalsIgnoreCase("admin")||s.equalsIgnoreCase("user")){
+        if (s.equalsIgnoreCase("admin") || s.equalsIgnoreCase("user")) {
             Optional<Member> optionalMember = this.memberRepository.findById(jwt_id);
-            if(optionalMember.isPresent()){
-                user = this.memberRepository.findById(jwt_id).get();
-                user_info= this.memberService.get_user_info(user);
-            }else{
+            if (optionalMember.isPresent()) {
+                try {
+                    Member member = optionalMember.get();
+                    pageOpen = this.memberService.openPage();
+                    isOkayList = this.memberService.assignmentCheck();
+
+                    message = "페이지 오픈 성공";
+
+                    return new ResponseEntity<>(new ResponseOpenPage(isOkayList, pageOpen, true, message), HttpStatus.OK);
+                } catch (Exception e) {
+                    message = e.getMessage();
+                    return new ResponseEntity<>(new Response_s_m(false, message), HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            } else {
                 System.out.println("no member with such id");
             }
-
-            user_status = this.memberService.assignment_submitted(user);
-
         }
-        return new ResponseEntity<>(new Response_mypage(true, user_info, user_status), HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseOpenPage(isOkayList, pageOpen, true, message), HttpStatus.OK);
+    }
+    @PostMapping("/users/mypage/assignment")
+    public ResponseEntity<Response> submitAssignment(List<MemberEditAssignmentDto> memberList){
+        String message = "";
+
+        try{
+            for(int i=0; i<memberList.size(); i++){
+                this.memberService.submitAssignment(memberList.get(i));
+            }
+            message = "과제 제출 완료";
+            return new ResponseEntity<>(new Response_s_m(true, message), HttpStatus.OK);
+        }catch(Exception e){
+            message = "오류 발생";
+            return new ResponseEntity<>(new Response_s_m(false, message), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 }
