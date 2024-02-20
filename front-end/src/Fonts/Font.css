@@ -1,0 +1,30 @@
+@font-face {
+    font-family: "Apples_B";
+    font-style: normal;
+    font-weight: 100;
+    src: url("./AnyConv.com__APPLESDGOTHICNEOB.woff") format("woff");
+}
+@font-face {
+    font-family: "Apples_EB";
+    font-style: normal;
+    font-weight: 100;
+    src: url("./AnyConv.com__APPLESDGOTHICNEOEB.woff") format("woff");
+}
+@font-face {
+    font-family: "Apples_H";
+    font-style: normal;
+    font-weight: 100;
+    src: url("./AnyConv.com__APPLESDGOTHICNEOH.woff") format("woff");
+}
+@font-face {
+    font-family: "Apples_L";
+    font-style: normal;
+    font-weight: 100;
+    src: url("./AnyConv.com__APPLESDGOTHICNEOL.woff") format("woff");
+}
+@font-face {
+    font-family: "Apples_M";
+    font-style: normal;
+    font-weight: 100;
+    src: url("./AnyConv.com__APPLESDGOTHICNEOM.woff") format("woff");
+}
