@@ -7,20 +7,9 @@ const Wrapper = styled.div`
     margin: 0 auto;
 `;
 
-const H1 = styled.p`
-    font-size: 2.3em;
-    color: white;
-    font-weight: bold;
-    top: 220px;
-    left: 550px;
-    text-align: left;
-    position: relative;
-    width: 300px;
-`;
 
 
-
-const UsersList = () => {
+const UserInfoList = () => {
     const dummyData = [
         {
             name: '이면빈',
@@ -41,19 +30,15 @@ const UsersList = () => {
     ];
 
     const handleSave = (editedValues) => {
-    //axios로 함수 작성, 서버 만들어지는 대로 ㄱㄱ
+    //fetch 함수 작성, 서버 만들어지는 대로 ㄱㄱ
     };
-
-    const onCheckboxChange = () => {
-
-    }
 
     return (
         <Wrapper>
-            <H1>회원 정보 목록</H1>
+            <h1>회원 정보 목록</h1>
             <InfoList userInfos={dummyData} handleSave={handleSave} />
         </Wrapper>
     );
 };
 
-export default UsersList;
+export default UserInfoList;

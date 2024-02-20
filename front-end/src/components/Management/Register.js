@@ -1,20 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
-import Leftbar from '../Leftbar_admin';
-
-const Wrapper = styled.div`
-    max-width: 800px;
-    margin: 0 auto;
-`;
 
 const RegisterBox = styled.div`
     background-color: #e6e6e6;
     border-radius: 10px;
     padding: 20px;
-    top: 150px;
-    left: 250px;
+    top: 218px;
+    left: 780px;
     width: 450px;
     position: relative;
 `;
@@ -63,45 +57,21 @@ const Register = () => {
     const [major, setMajor] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [passwordConfirmation, setPasswordConfirmation] = useState('');
-    const [studentType, setStudentType] = useState('');
-    const [isAdmin, setIsAdmin] = useState(false);
-    const token = localStorage.getItem('token');
-    const config = { headers: { "Authorization" : `Bearer ${token}` } };
-
-    useEffect(() => {
-        axios.get("/admin/members", config)
-            .then(response => {
-                if(response.data.success === false) {
-                    alert("접근 권한이 없습니다.");
-                    window.location.redirect('/');
-                }
-            })
-            .catch(err => console.log(err))
-    }, [])
-    
+    const [isChecked, setIsChecked] = useState(false);
 
     const handleRegister = () => {
-        if (password !== passwordConfirmation) {
-            alert("패스워드가 일치하지 않습니다. 다시 입력해주세요.");
-            return;
-        }
         axios
-        .post("/admin/members", {
-            name: studentName,
-            id: studentId,
+        .post("서버 엔트포인트", {
+            studentName: studentName,
+            studentId: studentId,
             major: major,
             email: email,
             password: password,
-            student_type: studentType,
-            admin: isAdmin,
+            isChecked: isChecked
         })
         .then((response) => {
-            if(response.data.success === true) {
-                return navigate("/MyPage");
-            }
-            else {
-                alert("회원 가입에 실패하였습니다.");
+            if(response.status === 200) {
+                return navigate("마이페이지");
             }
         })
         .catch((error) => {
@@ -110,8 +80,6 @@ const Register = () => {
     };
 
     return (
-        <Wrapper>
-        <Leftbar />
         <RegisterBox>
         <Title>Register</Title>
         <InputBox>
@@ -155,32 +123,15 @@ const Register = () => {
         />
         </InputBox>
         <InputBox>
-            <Input
-                type="password"
-                placeholder="패스워드 확인"
-                value={passwordConfirmation}
-                onChange={(e) => setPasswordConfirmation(e.target.value)}
-            />
-        </InputBox>
-        <InputBox>
-            <Input
-                type="text"
-                placeholder="yb/ob"
-                value={studentType}
-                onChange={(e) => setStudentType(e.target.value)}
-            />
-        </InputBox>
-        <InputBox>
-            <AdditionalText>관리자</AdditionalText>
+            <AdditionalText>ob</AdditionalText>
             <RadioInput
                 type="radio"
-                checked={isAdmin}
-                onChange={() => setIsAdmin(!isAdmin)}
+                checked={isChecked}
+                onChange={() => setIsChecked(!isChecked)}
             />
         </InputBox>
         <RegisterButton onClick={handleRegister}>Register</RegisterButton>
         </RegisterBox>
-        </Wrapper>
     );
 };
 

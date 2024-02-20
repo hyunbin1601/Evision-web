@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './UserInfo.css';
-import Leftbar from "../Leftbar";
+
 
 
 const UserInfo = () => {
@@ -14,7 +14,7 @@ const UserInfo = () => {
         //더미 데이터임!!!! 주의
         setTimeout(() => {
             setUserInfo({
-                name: '',
+                name: '이면빈',
                 major: '사보사보사보',
                 email: 'vina1601@ewhain.net',
                 generation: '6기'
@@ -29,7 +29,6 @@ const UserInfo = () => {
 
     return (
         <div className="user-info-container">
-        <Leftbar />
         <p>User Info</p>
             <div className="user-info-box">
                 <div className="info-item">

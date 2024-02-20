@@ -718,21 +718,21 @@ button:focus {
 
 .fork-btn {
   font-size: 1.1em !important;
-  padding-top: 20px !important;
+  padding-top: 10px !important;
 }
 
 .fork-btn-inner {
   line-height: 1.4em !important;
-  background-color: #1a5d1a !important;
-  padding: 0.65rem 1.2rem !important;
+  background-color: #934cce5e !important;
+  padding: 0.25rem 1.1rem !important;
   vertical-align: middle !important;
   text-align: center !important;
 }
 
 .fork-btn-inner:hover {
   transform: translateY(-2px) !important;
-  background-color: #1a5d1a !important;
-  border-color: #1a5d1a !important;
+  background-color: #a24dd386 !important;
+  border-color: #a24dd386 !important;
 }
 .fork-btn-inner::after {
   display: none !important;
