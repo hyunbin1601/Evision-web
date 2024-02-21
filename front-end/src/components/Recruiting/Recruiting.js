@@ -25,7 +25,7 @@ function Recruiting() {
           <h3>2.지원 자격</h3>
           <p className="recruting2">사이버보안을 열심히 공부하고 싶은 사이버보안 주/복수 전공생 및 진입 예정인 호크마생 누구나!</p>
           <h4>3.활동 기간</h4>
-          <p className="recruting3">추후 작성</p>
+          <p className="recruting3">활동 시작 시기로부터 1년동안 활동</p>
         </div>
         <div className="button-section">
           <a href='https://forms.gle/cjsxW5rKqaiU5g336' target="_blank" rel="noopener noreferrer">

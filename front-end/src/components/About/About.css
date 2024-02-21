@@ -39,7 +39,6 @@
 .card-body {
     font-size: 20px;
     text-align: left;
-    width:700px;
     left:8px;
     top:10px;
     position: relative;
@@ -55,8 +54,7 @@
   padding-top: 10px !important;
   padding-bottom: 30px !important;
   padding-left: 1px;
-  left:50px;
-  width:600px;
+  left:0px;
   text-align: left;
 }
 @media (max-width: 767px) {
@@ -78,9 +76,17 @@
 }
 
 @media (max-width: 767px) {
-  .about-img {
-    padding-top: 0 !important;
-  }
+
+}
+.about-img {
+  padding-top: 0 !important;
+  position: absolute;
+  top: 90px;
+}
+.img-fluid {
+  position: relative;
+  left: 500px;
+  top: 90px;
 }
 .blockquote-footer {
   color: #a1bf9f !important;

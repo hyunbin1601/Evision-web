@@ -15,11 +15,14 @@ function AboutCard() {
             새로운 기수 벗들과 함께하는 만큼 더욱 알차고 심도 있는 활동을 위해 양질의 프로그램을 기획하였습니다.
             <br />
             <br />
-            EVI$ION 활동!
+            *EVI$ION 활동*
           </p>
           <ul>
             <li className="about-activity">
               <ImPointRight /> 정규세션
+            </li>
+            <li className="about-activity">
+              <ImPointRight /> 러닝 세션
             </li>
             <li className="about-activity">
               <ImPointRight /> 심화스터디
