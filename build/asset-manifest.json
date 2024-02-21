@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.5fbac02f.css",
+    "main.js": "/static/js/main.43cf450a.js",
+    "static/js/787.7da95b79.chunk.js": "/static/js/787.7da95b79.chunk.js",
+    "static/media/AnyConv.com__APPLESDGOTHICNEOH.woff": "/static/media/AnyConv.com__APPLESDGOTHICNEOH.89b5c5573109f56b3e04.woff",
+    "static/media/AnyConv.com__APPLESDGOTHICNEOB.woff": "/static/media/AnyConv.com__APPLESDGOTHICNEOB.54a10830b9ab4a6f6e36.woff",
+    "static/media/AnyConv.com__APPLESDGOTHICNEOEB.woff": "/static/media/AnyConv.com__APPLESDGOTHICNEOEB.0959cf1da9e72d010497.woff",
+    "static/media/AnyConv.com__APPLESDGOTHICNEOM.woff": "/static/media/AnyConv.com__APPLESDGOTHICNEOM.3874ecaca835cc6f2ad7.woff",
+    "static/media/AnyConv.com__APPLESDGOTHICNEOL.woff": "/static/media/AnyConv.com__APPLESDGOTHICNEOL.29572d11395eb4468710.woff",
+    "static/media/about.png": "/static/media/about.aee0f771fbfc1e7b8fa8.png",
+    "static/media/avatar.svg": "/static/media/avatar.c1482af425786d7fee1ae99465dd321d.svg",
+    "static/media/home-bg.jpg": "/static/media/home-bg.39d36e8f4cd44a85e581.jpg",
+    "static/media/home-main.svg": "/static/media/home-main.bba797c9a2f391e73a7b6bce53ac6531.svg",
+    "static/media/pre.svg": "/static/media/pre.1bb0c2587d5f7cece345.svg",
+    "index.html": "/index.html",
+    "main.5fbac02f.css.map": "/static/css/main.5fbac02f.css.map",
+    "main.43cf450a.js.map": "/static/js/main.43cf450a.js.map",
+    "787.7da95b79.chunk.js.map": "/static/js/787.7da95b79.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.5fbac02f.css",
+    "static/js/main.43cf450a.js"
+  ]
+}
