@@ -105,8 +105,8 @@ public class MemberService {
 
         //이번주 세션만 필터링해서 저장
         for(int i=0; i<sessionList.size(); i++){
-            int cmp1=sessionList.get(i).getTodayDate().compareTo(thisMonday);//1이거나 0
-            int cmp2=sessionList.get(i).getTodayDate().compareTo(thisSunday);//-1이거나 0
+            int cmp1=sessionList.get(i).getTodayDate().compareTo(thisMonday);
+            int cmp2=sessionList.get(i).getTodayDate().compareTo(thisSunday);
 
             if(cmp1>=0 && cmp2<=0){
                 thisWeekSession.add(sessionList.get(i));
@@ -120,8 +120,8 @@ public class MemberService {
             List<Session> tmpList=thisWeekSession.stream().filter(x->x.getId().equals(memberList.get(finalJ).getId())).collect(Collectors.toList());;
 
             IsOkayDto tmp=new IsOkayDto(memberList.get(j).getId());
-            Optional<Session> tmpThu=tmpList.stream().filter(x->x.getTodayDate().getDayOfWeek().getValue()==4).findFirst();
-            Optional<Session> tmpSat=tmpList.stream().filter(x->x.getTodayDate().getDayOfWeek().getValue()==6).findFirst();
+            Optional<Session> tmpThu=tmpList.stream().filter(x->x.getSession_type().equals("thu")).findFirst();
+            Optional<Session> tmpSat=tmpList.stream().filter(x->x.getSession_type().equals("sat")).findFirst();
 
             //그날 과제 했는지 요일 나눠서 기록
             if(tmpThu.isPresent()){
@@ -149,7 +149,7 @@ public class MemberService {
         Calendar ca = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        ca.set(Calendar.DAY_OF_WEEK, 2);//calendar에서 2가 월요일 장난하냐?
+        ca.set(Calendar.DAY_OF_WEEK, 2);//calendar에서 2가 월요일
         String mon=sdf.format(ca.getTime());
 
         return mon;
@@ -161,6 +161,7 @@ public class MemberService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         ca.set(Calendar.DAY_OF_WEEK, 1);
+        ca.add(Calendar.DATE, 7);
         String sun=sdf.format(ca.getTime());
 
         return sun;
